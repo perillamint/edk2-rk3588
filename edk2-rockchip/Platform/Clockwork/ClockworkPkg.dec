@@ -1,0 +1,14 @@
+
+[Defines]
+  DEC_SPECIFICATION              = 0x00010005
+  PACKAGE_NAME                   = ClockworkPkg
+  PACKAGE_GUID                   = 2762aaaf-7045-49e0-9c17-94248119f037
+  PACKAGE_VERSION                = 0.1
+
+[Includes]
+  Include
+  Drivers/AxpPower/Axp22x
+
+[Protocols]
+  gAxpPowerProtocolGuid 							  = { 0x3717f2c,  0x9f1d, 0x4be5, { 0x8d, 0xb5, 0xf4, 0x25, 0x79, 0x1,  0xe5, 0x70 } }
+
