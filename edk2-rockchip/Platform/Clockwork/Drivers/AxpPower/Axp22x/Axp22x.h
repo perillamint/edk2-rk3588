@@ -53,12 +53,12 @@ extern AXP_PM_BUS_OPS Axp22xPmBusOps;
 /// @return 
 STATIC inline EFI_STATUS AxpPmBusRead(UINT8 chip, UINT8 addr, UINT8 *buffer)
 {
-  return Axp22xPmBusOps.AxpPmBusRead(chip, addr, buffer);
+  return Axp22xPmBusOps.AxpPmBusRead(NULL, chip, addr, buffer);
 }
 
 STATIC inline EFI_STATUS AxpPmBusWrite(UINT8 chip, UINT8 addr, UINT8 data)
 {
-  return Axp22xPmBusOps.AxpPmBusWrite(chip, addr, data);
+  return Axp22xPmBusOps.AxpPmBusWrite(NULL, chip, addr, data);
 }
 
 

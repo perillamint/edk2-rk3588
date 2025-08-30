@@ -21,6 +21,10 @@
   MdeModulePkg/MdeModulePkg.dec
   Silicon/Rockchip/RK3588/RK3588.dec
   Silicon/Rockchip/RockchipPkg.dec
+  Platform/Clockwork/ClockworkPkg.dec
+
+[Protocols]
+  gAxpPowerProtocolGuid
 
 [LibraryClasses]
   ArmLib

@@ -16,5 +16,5 @@
   gClockworkTokenSpaceGuid              = { 0xc4dfd718, 0x5c0d, 0x4450, { 0x91, 0x01, 0x9e, 0x68, 0xfa, 0x4e, 0x23, 0xba} }
 
 [PcdsFixedAtBuild]
-  gClockworkTokenSpaceGuid.PcdAxp22xRegulatorAddress|0x34|UINT8|0x00000001
-  gClockworkTokenSpaceGuid.PcdAxp22xRegulatorBus|0x08|UINT8|0x00000002
+  gClockworkTokenSpaceGuid.PcdAxp22xAddress|0x34|UINT8|0x00000001
+  gClockworkTokenSpaceGuid.PcdAxp22xBus|0x08|UINT8|0x00000002

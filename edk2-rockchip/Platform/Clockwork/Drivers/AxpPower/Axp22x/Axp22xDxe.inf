@@ -46,13 +46,14 @@
 [Guids]
   
 [Protocols]
+  gEfiI2cIoProtocolGuid           ## CONSUMES
+  gEfiDriverBindingProtocolGuid   ## PRODUCES
   gEfiSmbusHcProtocolGuid
-  gAxpPowerProtocolGuid
+  gAxpPowerProtocolGuid           ## PRODUCES
 	
 [Pcd]
-  gClockworkTokenSpaceGuid.PcdAxp22xRegulatorAddress
-  gClockworkTokenSpaceGuid.PcdAxp22xRegulatorBus
+  gClockworkTokenSpaceGuid.PcdAxp22xAddress
+  gClockworkTokenSpaceGuid.PcdAxp22xBus
 
-[depex]
-  gEfiSmbusHcProtocolGuid
-
+[Depex]
+  TRUE

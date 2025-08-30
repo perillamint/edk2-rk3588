@@ -142,29 +142,6 @@ typedef enum
 }AXP_POWER_ON_CAUSE;
 
 
-typedef 
-EFI_STATUS
-(EFIAPI *AXP_PM_BUS_READ) (
-  IN UINT8                      ChipAddress,
-  IN UINT8                      DeviceRegister,
-  IN UINT8                       *Data
-  );
-
-typedef 
-EFI_STATUS
-(EFIAPI *AXP_PM_BUS_WRITE) (
-  IN UINT8                      ChipAddress,
-  IN UINT8                      DeviceRegister,
-  IN UINT8                      Data
-  );
-  
-struct _AXP_PM_BUS_OPS {
-
-  AXP_PM_BUS_READ     AxpPmBusRead;
-  AXP_PM_BUS_WRITE    AxpPmBusWrite;
-
-};
-
 typedef struct _AXP_PM_BUS_OPS AXP_PM_BUS_OPS;
 //
 // Protocol interface structure
@@ -343,6 +320,8 @@ EFI_STATUS
 ///
 struct _AXP_POWER_PROTOCOL {
   AXP_POWER_ID              AxpPowerId;
+  UINT32                    Identifier; // Used to identify different PMU in the same bus
+  EFI_I2C_IO_PROTOCOL       *I2cIo;
 
   PROBE                 Probe;
   
@@ -381,5 +360,31 @@ struct _AXP_POWER_PROTOCOL {
 
 
 extern EFI_GUID gAxpPowerProtocolGuid;
+
+typedef 
+EFI_STATUS
+(EFIAPI *AXP_PM_BUS_READ) (
+  IN CONST AXP_POWER_PROTOCOL *This,
+  IN UINT8                      ChipAddress,
+  IN UINT8                      DeviceRegister,
+  IN UINT8                       *Data
+  );
+
+typedef 
+EFI_STATUS
+(EFIAPI *AXP_PM_BUS_WRITE) (
+  IN CONST AXP_POWER_PROTOCOL *This,
+  IN UINT8                      ChipAddress,
+  IN UINT8                      DeviceRegister,
+  IN UINT8                      Data
+  );
+  
+struct _AXP_PM_BUS_OPS {
+
+  AXP_PM_BUS_READ     AxpPmBusRead;
+  AXP_PM_BUS_WRITE    AxpPmBusWrite;
+
+};
+
 
 #endif

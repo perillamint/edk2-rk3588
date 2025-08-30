@@ -6,6 +6,9 @@
 #
 ##
 
+  # Axp22x PMIC
+  INF $(VENDOR_DIRECTORY)/Drivers/AxpPower/Axp22x/Axp22xDxe.inf
+
   # ACPI Support
   INF RuleOverride = ACPITABLE $(PLATFORM_DIRECTORY)/AcpiTables/AcpiTables.inf
 

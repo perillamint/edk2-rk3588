@@ -17,6 +17,11 @@
 #include <Soc.h>
 #include <VarStoreData.h>
 
+#include <Library/UefiBootServicesTableLib.h>
+#include <Protocol/I2cIo.h>
+#include <Protocol/I2c.h>
+#include <Protocol/AxpPower.h>
+
 static struct regulator_init_data  rk806_init_data[] = {
   /* Master PMIC */
   RK8XX_VOLTAGE_INIT (MASTER_BUCK1,  750000),
@@ -382,4 +387,19 @@ PlatformEarlyInit (
 {
   // Configure various things specific to this platform
   GpioPinSetFunction (1, GPIO_PIN_PC4, 0); // jdet
+
+  EFI_STATUS Status;
+
+  // Initialize Axp22x PMIC
+  DEBUG ((DEBUG_INFO, "Finding Axp22x protocol...\n"));
+  // TODO: Should it be static or not.
+  static AXP_POWER_PROTOCOL      *AxpPower = NULL ;
+  Status = gBS->LocateProtocol(&gAxpPowerProtocolGuid, NULL, (VOID **)&AxpPower);
+  if (EFI_ERROR (Status)) 
+  {   
+    DEBUG((DEBUG_WARN, "Failed to get AxpPowerProtocol.\n"));
+    return;
+    //return Status;
+  }
+  DEBUG ((DEBUG_WARN, "AxpPowerID = %d\n", AxpPower->AxpPowerId));
 }

@@ -103,6 +103,9 @@
     VOP_OUTPUT_IF_DP0
   })}
 
+  gClockworkTokenSpaceGuid.PcdAxp22xAddress|0x34
+  gClockworkTokenSpaceGuid.PcdAxp22xBus|0x08
+
 ################################################################################
 #
 # Components Section - list of all EDK II Modules needed by this Platform.
@@ -118,4 +121,5 @@
 
   # Splash screen logo
   $(VENDOR_DIRECTORY)/Drivers/LogoDxe/LogoDxe.inf
+
   $(VENDOR_DIRECTORY)/Drivers/AxpPower/Axp22x/Axp22xDxe.inf

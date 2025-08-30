@@ -18,25 +18,11 @@
 #include <Library/DebugLib.h>
 #include <Library/BaseLib.h>
 
+#include <Protocol/I2cIo.h>
+#include <Protocol/I2c.h>
 #include <Protocol/AxpPower.h>
 #include <Axp22x.h>
 
-/*
-************************************************************************************************************
-*
-*                                             function
-*
-*    �������ƣ�
-*
-*    �����б���
-*
-*    ����ֵ  ��
-*
-*    ˵��    ��
-*
-*
-************************************************************************************************************
-*/
 STATIC EFI_STATUS axp22_set_dc1sw(int onoff)
 {
   UINT8   reg_value;
