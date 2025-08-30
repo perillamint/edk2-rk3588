@@ -46,14 +46,19 @@ extern EFI_STATUS Axp22xProbeSupplyStatus(IN UINTN VoltageIndex,IN UINTN  *Volta
 
 extern AXP_PM_BUS_OPS Axp22xPmBusOps; 
 
+/// @brief Read a byte from the AXP PMU via the SMBus.
+/// @param chip AXP PMU I2C address.
+/// @param addr AXP PMU register address.
+/// @param buffer Payload buffer
+/// @return 
 STATIC inline EFI_STATUS AxpPmBusRead(UINT8 chip, UINT8 addr, UINT8 *buffer)
 {
-  return Axp22xPmBusOps.AxpPmBusRead(addr,buffer);
+  return Axp22xPmBusOps.AxpPmBusRead(chip, addr, buffer);
 }
 
 STATIC inline EFI_STATUS AxpPmBusWrite(UINT8 chip, UINT8 addr, UINT8 data)
 {
-  return Axp22xPmBusOps.AxpPmBusWrite(addr,data);
+  return Axp22xPmBusOps.AxpPmBusWrite(chip, addr, data);
 }
 
 

@@ -29,7 +29,7 @@
 
 STATIC EFI_SMBUS_HC_PROTOCOL *Smbus;
 
-STATIC EFI_STATUS Axp22xPmBusRead(UINT8 DeviceRegister, UINT8 *Buffer)
+STATIC EFI_STATUS Axp22xPmBusRead(UINT8 ChipAddress, UINT8 DeviceRegister, UINT8 *Buffer)
 {
   EFI_STATUS               Status;
   UINTN                    DeviceBufferLength = 1 + 1; //device address + data
@@ -44,7 +44,7 @@ STATIC EFI_STATUS Axp22xPmBusRead(UINT8 DeviceRegister, UINT8 *Buffer)
   return Status;
 }
 
-STATIC EFI_STATUS Axp22xPmBusWrite(UINT8 DeviceRegister, UINT8 data)
+STATIC EFI_STATUS Axp22xPmBusWrite(UINT8 ChipAddress, UINT8 DeviceRegister, UINT8 data)
 {
   EFI_STATUS               Status;
   UINTN                    DeviceBufferLength = 1 + 1; //device address + data

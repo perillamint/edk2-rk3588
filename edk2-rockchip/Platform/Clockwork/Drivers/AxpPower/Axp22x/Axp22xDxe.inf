@@ -50,6 +50,8 @@
   gAxpPowerProtocolGuid
 	
 [Pcd]
+  gClockworkTokenSpaceGuid.PcdAxp22xRegulatorAddress
+  gClockworkTokenSpaceGuid.PcdAxp22xRegulatorBus
 
 [depex]
   gEfiSmbusHcProtocolGuid

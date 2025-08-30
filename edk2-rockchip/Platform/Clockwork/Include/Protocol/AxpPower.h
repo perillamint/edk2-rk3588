@@ -145,6 +145,7 @@ typedef enum
 typedef 
 EFI_STATUS
 (EFIAPI *AXP_PM_BUS_READ) (
+  IN UINT8                      ChipAddress,
   IN UINT8                      DeviceRegister,
   IN UINT8                       *Data
   );
@@ -152,6 +153,7 @@ EFI_STATUS
 typedef 
 EFI_STATUS
 (EFIAPI *AXP_PM_BUS_WRITE) (
+  IN UINT8                      ChipAddress,
   IN UINT8                      DeviceRegister,
   IN UINT8                      Data
   );
