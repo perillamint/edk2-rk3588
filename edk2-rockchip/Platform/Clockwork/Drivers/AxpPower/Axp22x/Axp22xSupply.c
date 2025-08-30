@@ -23,11 +23,11 @@
 #include <Protocol/AxpPower.h>
 #include <Axp22x.h>
 
-STATIC EFI_STATUS axp22_set_dc1sw(int onoff)
+STATIC EFI_STATUS axp22_set_dc1sw(IN CONST AXP_POWER_PROTOCOL *This, int onoff)
 {
   UINT8   reg_value;
 
-  if(AxpPmBusRead(AXP22X_ADDR, BOOT_POWER22_OUTPUT_CTL2, &reg_value))
+  if(AxpI2cRead(This, AXP22X_ADDR, BOOT_POWER22_OUTPUT_CTL2, &reg_value))
   {
     return EFI_DEVICE_ERROR;
   }
@@ -39,7 +39,7 @@ STATIC EFI_STATUS axp22_set_dc1sw(int onoff)
   {
     reg_value &= ~(1 << 7);
   }
-  if(AxpPmBusWrite(AXP22X_ADDR, BOOT_POWER22_OUTPUT_CTL2, reg_value))
+  if(AxpI2cWrite(This, AXP22X_ADDR, BOOT_POWER22_OUTPUT_CTL2, reg_value))
   {
     DEBUG((EFI_D_ERROR,"sunxi pmu error : unable to set dc1sw\n"));
     return EFI_DEVICE_ERROR;
@@ -63,11 +63,11 @@ STATIC EFI_STATUS axp22_set_dc1sw(int onoff)
 *
 ************************************************************************************************************
 */
-STATIC EFI_STATUS axp22_set_dc5ldo(int onoff)
+STATIC EFI_STATUS axp22_set_dc5ldo(IN CONST AXP_POWER_PROTOCOL *This, int onoff)
 {
   UINT8   reg_value;
 
-  if(AxpPmBusRead(AXP22X_ADDR, BOOT_POWER22_OUTPUT_CTL1, &reg_value))
+  if(AxpI2cRead(This, AXP22X_ADDR, BOOT_POWER22_OUTPUT_CTL1, &reg_value))
   {
     return EFI_DEVICE_ERROR;
   }
@@ -79,7 +79,7 @@ STATIC EFI_STATUS axp22_set_dc5ldo(int onoff)
   {
     reg_value &= ~(1 << 0);
   }
-  if(AxpPmBusWrite(AXP22X_ADDR, BOOT_POWER22_OUTPUT_CTL1, reg_value))
+  if(AxpI2cWrite(This, AXP22X_ADDR, BOOT_POWER22_OUTPUT_CTL1, reg_value))
   {
     DEBUG((EFI_D_ERROR,"sunxi pmu error : unable to set dc5ldo\n"));
     return EFI_DEVICE_ERROR;
@@ -104,7 +104,7 @@ STATIC EFI_STATUS axp22_set_dc5ldo(int onoff)
 *
 ************************************************************************************************************
 */
-STATIC EFI_STATUS axp22_set_dcdc1(int set_vol, int onoff)
+STATIC EFI_STATUS axp22_set_dcdc1(IN CONST AXP_POWER_PROTOCOL *This, int set_vol, int onoff)
 {
   UINT8   reg_value;
 
@@ -118,12 +118,12 @@ STATIC EFI_STATUS axp22_set_dcdc1(int set_vol, int onoff)
     {
       set_vol = 3400;
     }
-    if(AxpPmBusRead(AXP22X_ADDR, BOOT_POWER22_DC1OUT_VOL, &reg_value))
+    if(AxpI2cRead(This, AXP22X_ADDR, BOOT_POWER22_DC1OUT_VOL, &reg_value))
     {
       return EFI_DEVICE_ERROR;
     }
     reg_value = ((set_vol - 1600)/100);
-    if(AxpPmBusWrite(AXP22X_ADDR, BOOT_POWER22_DC1OUT_VOL, reg_value))
+    if(AxpI2cWrite(This, AXP22X_ADDR, BOOT_POWER22_DC1OUT_VOL, reg_value))
     {
       DEBUG((EFI_D_ERROR,"sunxi pmu error : unable to set dcdc1\n"));
       return EFI_DEVICE_ERROR;
@@ -134,7 +134,7 @@ STATIC EFI_STATUS axp22_set_dcdc1(int set_vol, int onoff)
   {
     return EFI_SUCCESS;
   }
-  if(AxpPmBusRead(AXP22X_ADDR, BOOT_POWER22_OUTPUT_CTL1, &reg_value))
+  if(AxpI2cRead(This, AXP22X_ADDR, BOOT_POWER22_OUTPUT_CTL1, &reg_value))
   {
     return EFI_DEVICE_ERROR;
   }
@@ -146,7 +146,7 @@ STATIC EFI_STATUS axp22_set_dcdc1(int set_vol, int onoff)
   {
     reg_value |=  (1 << 1);
   }
-  if(AxpPmBusWrite(AXP22X_ADDR, BOOT_POWER22_OUTPUT_CTL1, reg_value))
+  if(AxpI2cWrite(This, AXP22X_ADDR, BOOT_POWER22_OUTPUT_CTL1, reg_value))
   {
     DEBUG((EFI_D_ERROR,"sunxi pmu error : unable to onoff dcdc1\n"));
     return EFI_DEVICE_ERROR;
@@ -170,7 +170,7 @@ STATIC EFI_STATUS axp22_set_dcdc1(int set_vol, int onoff)
 *
 ************************************************************************************************************
 */
-STATIC EFI_STATUS axp22_set_dcdc2(int set_vol, int onoff)
+STATIC EFI_STATUS axp22_set_dcdc2(IN CONST AXP_POWER_PROTOCOL *This, int set_vol, int onoff)
 {
   UINT8   reg_value;
 
@@ -184,13 +184,13 @@ STATIC EFI_STATUS axp22_set_dcdc2(int set_vol, int onoff)
     {
       set_vol = 1540;
     }
-    if(AxpPmBusRead(AXP22X_ADDR, BOOT_POWER22_DC2OUT_VOL, &reg_value))
+    if(AxpI2cRead(This, AXP22X_ADDR, BOOT_POWER22_DC2OUT_VOL, &reg_value))
     {
       return EFI_DEVICE_ERROR;
     }
     reg_value &= ~0x3f;
     reg_value |= (set_vol - 600)/20;
-    if(AxpPmBusWrite(AXP22X_ADDR, BOOT_POWER22_DC2OUT_VOL, reg_value))
+    if(AxpI2cWrite(This, AXP22X_ADDR, BOOT_POWER22_DC2OUT_VOL, reg_value))
     {
       DEBUG((EFI_D_ERROR,"sunxi pmu error : unable to set dcdc2\n"));
       return EFI_DEVICE_ERROR;
@@ -201,7 +201,7 @@ STATIC EFI_STATUS axp22_set_dcdc2(int set_vol, int onoff)
   {
     return EFI_SUCCESS;
   }
-  if(AxpPmBusRead(AXP22X_ADDR, BOOT_POWER22_OUTPUT_CTL1, &reg_value))
+  if(AxpI2cRead(This, AXP22X_ADDR, BOOT_POWER22_OUTPUT_CTL1, &reg_value))
   {
     return EFI_DEVICE_ERROR;
   }
@@ -213,7 +213,7 @@ STATIC EFI_STATUS axp22_set_dcdc2(int set_vol, int onoff)
   {
     reg_value |=  (1 << 2);
   }
-  if(AxpPmBusWrite(AXP22X_ADDR, BOOT_POWER22_OUTPUT_CTL1, reg_value))
+  if(AxpI2cWrite(This, AXP22X_ADDR, BOOT_POWER22_OUTPUT_CTL1, reg_value))
   {
     DEBUG((EFI_D_ERROR,"sunxi pmu error : unable to onoff dcdc2\n"));
     return EFI_DEVICE_ERROR;
@@ -237,7 +237,7 @@ STATIC EFI_STATUS axp22_set_dcdc2(int set_vol, int onoff)
 *
 ************************************************************************************************************
 */
-STATIC EFI_STATUS axp22_set_dcdc3(int set_vol, int onoff)
+STATIC EFI_STATUS axp22_set_dcdc3(IN CONST AXP_POWER_PROTOCOL *This, int set_vol, int onoff)
 {
   UINT8   reg_value;
 
@@ -251,12 +251,12 @@ STATIC EFI_STATUS axp22_set_dcdc3(int set_vol, int onoff)
     {
       set_vol = 1860;
     }
-    if(AxpPmBusRead(AXP22X_ADDR, BOOT_POWER22_DC3OUT_VOL, &reg_value))
+    if(AxpI2cRead(This, AXP22X_ADDR, BOOT_POWER22_DC3OUT_VOL, &reg_value))
     {
       return EFI_DEVICE_ERROR;
     }
     reg_value = ((set_vol - 600)/20);
-    if(AxpPmBusWrite(AXP22X_ADDR, BOOT_POWER22_DC3OUT_VOL, reg_value))
+    if(AxpI2cWrite(This, AXP22X_ADDR, BOOT_POWER22_DC3OUT_VOL, reg_value))
     {
       DEBUG((EFI_D_ERROR,"sunxi pmu error : unable to set dcdc3\n"));
       return EFI_DEVICE_ERROR;
@@ -267,7 +267,7 @@ STATIC EFI_STATUS axp22_set_dcdc3(int set_vol, int onoff)
   {
     return EFI_SUCCESS;
   }
-  if(AxpPmBusRead(AXP22X_ADDR, BOOT_POWER22_OUTPUT_CTL1, &reg_value))
+  if(AxpI2cRead(This, AXP22X_ADDR, BOOT_POWER22_OUTPUT_CTL1, &reg_value))
   {
     return EFI_DEVICE_ERROR;
   }
@@ -279,7 +279,7 @@ STATIC EFI_STATUS axp22_set_dcdc3(int set_vol, int onoff)
   {
     reg_value |=  (1 << 3);
   }
-  if(AxpPmBusWrite(AXP22X_ADDR, BOOT_POWER22_OUTPUT_CTL1, reg_value))
+  if(AxpI2cWrite(This, AXP22X_ADDR, BOOT_POWER22_OUTPUT_CTL1, reg_value))
   {
     DEBUG((EFI_D_ERROR,"sunxi pmu error : unable to set onoff dcdc3\n"));
     return EFI_DEVICE_ERROR;
@@ -303,7 +303,7 @@ STATIC EFI_STATUS axp22_set_dcdc3(int set_vol, int onoff)
 *
 ************************************************************************************************************
 */
-STATIC EFI_STATUS axp22_set_dcdc4(int set_vol, int onoff)
+STATIC EFI_STATUS axp22_set_dcdc4(IN CONST AXP_POWER_PROTOCOL *This, int set_vol, int onoff)
 {
   UINT8   reg_value;
 
@@ -317,12 +317,12 @@ STATIC EFI_STATUS axp22_set_dcdc4(int set_vol, int onoff)
     {
       set_vol = 1540;
     }
-    if(AxpPmBusRead(AXP22X_ADDR, BOOT_POWER22_DC4OUT_VOL, &reg_value))
+    if(AxpI2cRead(This, AXP22X_ADDR, BOOT_POWER22_DC4OUT_VOL, &reg_value))
     {
       return EFI_DEVICE_ERROR;
     }
     reg_value = ((set_vol - 600)/20);
-    if(AxpPmBusWrite(AXP22X_ADDR, BOOT_POWER22_DC4OUT_VOL, reg_value))
+    if(AxpI2cWrite(This, AXP22X_ADDR, BOOT_POWER22_DC4OUT_VOL, reg_value))
     {
       DEBUG((EFI_D_ERROR,"sunxi pmu error : unable to set dcdc4\n"));
       return EFI_DEVICE_ERROR;
@@ -333,7 +333,7 @@ STATIC EFI_STATUS axp22_set_dcdc4(int set_vol, int onoff)
   {
     return EFI_SUCCESS;
   }
-  if(AxpPmBusRead(AXP22X_ADDR, BOOT_POWER22_OUTPUT_CTL1, &reg_value))
+  if(AxpI2cRead(This, AXP22X_ADDR, BOOT_POWER22_OUTPUT_CTL1, &reg_value))
   {
     return EFI_DEVICE_ERROR;
   }
@@ -345,7 +345,7 @@ STATIC EFI_STATUS axp22_set_dcdc4(int set_vol, int onoff)
   {
     reg_value |=  (1 << 4);
   }
-    if(AxpPmBusWrite(AXP22X_ADDR, BOOT_POWER22_OUTPUT_CTL1, reg_value))
+    if(AxpI2cWrite(This, AXP22X_ADDR, BOOT_POWER22_OUTPUT_CTL1, reg_value))
   {
     DEBUG((EFI_D_ERROR,"sunxi pmu error : unable to set onoff dcdc4\n"));
     return EFI_DEVICE_ERROR;
@@ -369,7 +369,7 @@ STATIC EFI_STATUS axp22_set_dcdc4(int set_vol, int onoff)
 *
 ************************************************************************************************************
 */
-STATIC EFI_STATUS axp22_set_dcdc5(int set_vol, int onoff)
+STATIC EFI_STATUS axp22_set_dcdc5(IN CONST AXP_POWER_PROTOCOL *This, int set_vol, int onoff)
 {
   UINT8   reg_value;
 
@@ -383,12 +383,12 @@ STATIC EFI_STATUS axp22_set_dcdc5(int set_vol, int onoff)
     {
       set_vol = 2550;
     }
-    if(AxpPmBusRead(AXP22X_ADDR, BOOT_POWER22_DC5OUT_VOL, &reg_value))
+    if(AxpI2cRead(This, AXP22X_ADDR, BOOT_POWER22_DC5OUT_VOL, &reg_value))
     {
       return EFI_DEVICE_ERROR;
     }
     reg_value = ((set_vol - 1000)/50);
-    if(AxpPmBusWrite(AXP22X_ADDR, BOOT_POWER22_DC5OUT_VOL, reg_value))
+    if(AxpI2cWrite(This, AXP22X_ADDR, BOOT_POWER22_DC5OUT_VOL, reg_value))
     {
       DEBUG((EFI_D_ERROR,"sunxi pmu error : unable to set dcdc5\n"));
       return EFI_DEVICE_ERROR;
@@ -399,7 +399,7 @@ STATIC EFI_STATUS axp22_set_dcdc5(int set_vol, int onoff)
   {
     return EFI_SUCCESS;
   }
-  if(AxpPmBusRead(AXP22X_ADDR, BOOT_POWER22_OUTPUT_CTL1, &reg_value))
+  if(AxpI2cRead(This, AXP22X_ADDR, BOOT_POWER22_OUTPUT_CTL1, &reg_value))
   {
     return EFI_DEVICE_ERROR;
   }
@@ -411,7 +411,7 @@ STATIC EFI_STATUS axp22_set_dcdc5(int set_vol, int onoff)
   {
     reg_value |=  (1 << 5);
   }
-  if(AxpPmBusWrite(AXP22X_ADDR, BOOT_POWER22_OUTPUT_CTL1, reg_value))
+  if(AxpI2cWrite(This, AXP22X_ADDR, BOOT_POWER22_OUTPUT_CTL1, reg_value))
   {
     DEBUG((EFI_D_ERROR,"sunxi pmu error : unable to set onoff dcdc5\n"));
     return EFI_DEVICE_ERROR;
@@ -436,7 +436,7 @@ STATIC EFI_STATUS axp22_set_dcdc5(int set_vol, int onoff)
 *
 ************************************************************************************************************
 */
-STATIC EFI_STATUS axp22_set_aldo1(int set_vol, int onoff)
+STATIC EFI_STATUS axp22_set_aldo1(IN CONST AXP_POWER_PROTOCOL *This, int set_vol, int onoff)
 {
   UINT8 reg_value;
 
@@ -450,13 +450,13 @@ STATIC EFI_STATUS axp22_set_aldo1(int set_vol, int onoff)
     {
       set_vol = 3300;
     }
-    if(AxpPmBusRead(AXP22X_ADDR, BOOT_POWER22_ALDO1OUT_VOL, &reg_value))
+    if(AxpI2cRead(This, AXP22X_ADDR, BOOT_POWER22_ALDO1OUT_VOL, &reg_value))
     {
       return EFI_DEVICE_ERROR;
     }
     reg_value &= 0xE0;
     reg_value |= ((set_vol - 700)/100);
-    if(AxpPmBusWrite(AXP22X_ADDR, BOOT_POWER22_ALDO1OUT_VOL, reg_value))
+    if(AxpI2cWrite(This, AXP22X_ADDR, BOOT_POWER22_ALDO1OUT_VOL, reg_value))
     {
       DEBUG((EFI_D_ERROR,"sunxi pmu error : unable to set aldo1\n"));
       return EFI_DEVICE_ERROR;
@@ -467,7 +467,7 @@ STATIC EFI_STATUS axp22_set_aldo1(int set_vol, int onoff)
   {
     return EFI_SUCCESS;
   }
-  if(AxpPmBusRead(AXP22X_ADDR, BOOT_POWER22_OUTPUT_CTL1, &reg_value))
+  if(AxpI2cRead(This, AXP22X_ADDR, BOOT_POWER22_OUTPUT_CTL1, &reg_value))
   {
     return EFI_DEVICE_ERROR;
   }
@@ -479,7 +479,7 @@ STATIC EFI_STATUS axp22_set_aldo1(int set_vol, int onoff)
   {
     reg_value |=  (1 << 6);
   }
-  if(AxpPmBusWrite(AXP22X_ADDR, BOOT_POWER22_OUTPUT_CTL1, reg_value))
+  if(AxpI2cWrite(This, AXP22X_ADDR, BOOT_POWER22_OUTPUT_CTL1, reg_value))
   {
     DEBUG((EFI_D_ERROR,"sunxi pmu error : unable to onoff aldo1\n"));
     return EFI_DEVICE_ERROR;
@@ -503,7 +503,7 @@ STATIC EFI_STATUS axp22_set_aldo1(int set_vol, int onoff)
 *
 ************************************************************************************************************
 */
-STATIC EFI_STATUS axp22_set_aldo2(int set_vol, int onoff)
+STATIC EFI_STATUS axp22_set_aldo2(IN CONST AXP_POWER_PROTOCOL *This, int set_vol, int onoff)
 {
   UINT8 reg_value;
 
@@ -517,13 +517,13 @@ STATIC EFI_STATUS axp22_set_aldo2(int set_vol, int onoff)
     {
       set_vol = 3300;
     }
-    if(AxpPmBusRead(AXP22X_ADDR, BOOT_POWER22_ALDO2OUT_VOL, &reg_value))
+    if(AxpI2cRead(This, AXP22X_ADDR, BOOT_POWER22_ALDO2OUT_VOL, &reg_value))
     {
       return EFI_DEVICE_ERROR;
     }
     reg_value &= 0xE0;
     reg_value |= ((set_vol - 700)/100);
-    if(AxpPmBusWrite(AXP22X_ADDR, BOOT_POWER22_ALDO2OUT_VOL, reg_value))
+    if(AxpI2cWrite(This, AXP22X_ADDR, BOOT_POWER22_ALDO2OUT_VOL, reg_value))
     {
       DEBUG((EFI_D_ERROR,"sunxi pmu error : unable to set aldo2\n"));
       return EFI_DEVICE_ERROR;
@@ -534,7 +534,7 @@ STATIC EFI_STATUS axp22_set_aldo2(int set_vol, int onoff)
   {
     return EFI_SUCCESS;
   }
-  if(AxpPmBusRead(AXP22X_ADDR, BOOT_POWER22_OUTPUT_CTL1, &reg_value))
+  if(AxpI2cRead(This, AXP22X_ADDR, BOOT_POWER22_OUTPUT_CTL1, &reg_value))
   {
     return EFI_DEVICE_ERROR;
   }
@@ -546,7 +546,7 @@ STATIC EFI_STATUS axp22_set_aldo2(int set_vol, int onoff)
   {
     reg_value |=  (1 << 7);
   }
-  if(AxpPmBusWrite(AXP22X_ADDR, BOOT_POWER22_OUTPUT_CTL1, reg_value))
+  if(AxpI2cWrite(This, AXP22X_ADDR, BOOT_POWER22_OUTPUT_CTL1, reg_value))
   {
     DEBUG((EFI_D_ERROR,"sunxi pmu error : unable to onoff aldo2\n"));
     return EFI_DEVICE_ERROR;
@@ -570,7 +570,7 @@ STATIC EFI_STATUS axp22_set_aldo2(int set_vol, int onoff)
 *
 ************************************************************************************************************
 */
-STATIC EFI_STATUS axp22_set_aldo3(int set_vol, int onoff)
+STATIC EFI_STATUS axp22_set_aldo3(IN CONST AXP_POWER_PROTOCOL *This, int set_vol, int onoff)
 {
   UINT8 reg_value;
 
@@ -584,13 +584,13 @@ STATIC EFI_STATUS axp22_set_aldo3(int set_vol, int onoff)
     {
       set_vol = 3300;
     }
-    if(AxpPmBusRead(AXP22X_ADDR, BOOT_POWER22_ALDO3OUT_VOL, &reg_value))
+    if(AxpI2cRead(This, AXP22X_ADDR, BOOT_POWER22_ALDO3OUT_VOL, &reg_value))
     {
       return EFI_DEVICE_ERROR;
     }
     reg_value &= 0xE0;
     reg_value |= ((set_vol - 700)/100);
-    if(AxpPmBusWrite(AXP22X_ADDR, BOOT_POWER22_ALDO3OUT_VOL, reg_value))
+    if(AxpI2cWrite(This, AXP22X_ADDR, BOOT_POWER22_ALDO3OUT_VOL, reg_value))
     {
       DEBUG((EFI_D_ERROR,"sunxi pmu error : unable to set aldo3\n"));
       return EFI_DEVICE_ERROR;
@@ -601,7 +601,7 @@ STATIC EFI_STATUS axp22_set_aldo3(int set_vol, int onoff)
   {
     return EFI_SUCCESS;
   }
-  if(AxpPmBusRead(AXP22X_ADDR, BOOT_POWER22_ALDO_CTL, &reg_value))
+  if(AxpI2cRead(This, AXP22X_ADDR, BOOT_POWER22_ALDO_CTL, &reg_value))
   {
     return EFI_DEVICE_ERROR;
   }
@@ -613,7 +613,7 @@ STATIC EFI_STATUS axp22_set_aldo3(int set_vol, int onoff)
   {
     reg_value |=  (1 << 7);
   }
-  if(AxpPmBusWrite(AXP22X_ADDR, BOOT_POWER22_ALDO_CTL, reg_value))
+  if(AxpI2cWrite(This, AXP22X_ADDR, BOOT_POWER22_ALDO_CTL, reg_value))
   {
     DEBUG((EFI_D_ERROR,"sunxi pmu error : unable to onoff aldo3\n"));
     return EFI_DEVICE_ERROR;
@@ -637,7 +637,7 @@ STATIC EFI_STATUS axp22_set_aldo3(int set_vol, int onoff)
 *
 ************************************************************************************************************
 */
-STATIC EFI_STATUS axp22_set_dldo1(int set_vol, int onoff)
+STATIC EFI_STATUS axp22_set_dldo1(IN CONST AXP_POWER_PROTOCOL *This, int set_vol, int onoff)
 {
   UINT8 reg_value;
 
@@ -651,13 +651,13 @@ STATIC EFI_STATUS axp22_set_dldo1(int set_vol, int onoff)
     {
       set_vol = 3300;
     }
-    if(AxpPmBusRead(AXP22X_ADDR, BOOT_POWER22_DLDO1_VOL, &reg_value))
+    if(AxpI2cRead(This, AXP22X_ADDR, BOOT_POWER22_DLDO1_VOL, &reg_value))
     {
       return EFI_DEVICE_ERROR;
     }
     reg_value &= 0xE0;
     reg_value |= ((set_vol - 700)/100);
-    if(AxpPmBusWrite(AXP22X_ADDR, BOOT_POWER22_DLDO1_VOL, reg_value))
+    if(AxpI2cWrite(This, AXP22X_ADDR, BOOT_POWER22_DLDO1_VOL, reg_value))
     {
       DEBUG((EFI_D_ERROR,"sunxi pmu error : unable to set dldo1\n"));
       return EFI_DEVICE_ERROR;
@@ -668,7 +668,7 @@ STATIC EFI_STATUS axp22_set_dldo1(int set_vol, int onoff)
   {
     return EFI_SUCCESS;
   }
-  if(AxpPmBusRead(AXP22X_ADDR, BOOT_POWER22_OUTPUT_CTL2, &reg_value))
+  if(AxpI2cRead(This, AXP22X_ADDR, BOOT_POWER22_OUTPUT_CTL2, &reg_value))
   {
     return EFI_DEVICE_ERROR;
   }
@@ -680,7 +680,7 @@ STATIC EFI_STATUS axp22_set_dldo1(int set_vol, int onoff)
   {
     reg_value |=  (1 << 3);
   }
-  if(AxpPmBusWrite(AXP22X_ADDR, BOOT_POWER22_OUTPUT_CTL2, reg_value))
+  if(AxpI2cWrite(This, AXP22X_ADDR, BOOT_POWER22_OUTPUT_CTL2, reg_value))
   {
     DEBUG((EFI_D_ERROR,"sunxi pmu error : unable to onoff dldo1\n"));
     return EFI_DEVICE_ERROR;
@@ -704,7 +704,7 @@ STATIC EFI_STATUS axp22_set_dldo1(int set_vol, int onoff)
 *
 ************************************************************************************************************
 */
-STATIC EFI_STATUS axp22_set_dldo2(int set_vol, int onoff)
+STATIC EFI_STATUS axp22_set_dldo2(IN CONST AXP_POWER_PROTOCOL *This, int set_vol, int onoff)
 {
   UINT8 reg_value;
 
@@ -718,13 +718,13 @@ STATIC EFI_STATUS axp22_set_dldo2(int set_vol, int onoff)
     {
       set_vol = 3300;
     }
-    if(AxpPmBusRead(AXP22X_ADDR, BOOT_POWER22_DLDO2_VOL, &reg_value))
+    if(AxpI2cRead(This, AXP22X_ADDR, BOOT_POWER22_DLDO2_VOL, &reg_value))
     {
       return EFI_DEVICE_ERROR;
     }
     reg_value &= 0xE0;
     reg_value |= ((set_vol - 700)/100);
-    if(AxpPmBusWrite(AXP22X_ADDR, BOOT_POWER22_DLDO2_VOL, reg_value))
+    if(AxpI2cWrite(This, AXP22X_ADDR, BOOT_POWER22_DLDO2_VOL, reg_value))
     {
       DEBUG((EFI_D_ERROR,"sunxi pmu error : unable to set dldo2\n"));
       return EFI_DEVICE_ERROR;
@@ -735,7 +735,7 @@ STATIC EFI_STATUS axp22_set_dldo2(int set_vol, int onoff)
   {
     return EFI_SUCCESS;
   }
-  if(AxpPmBusRead(AXP22X_ADDR, BOOT_POWER22_OUTPUT_CTL2, &reg_value))
+  if(AxpI2cRead(This, AXP22X_ADDR, BOOT_POWER22_OUTPUT_CTL2, &reg_value))
   {
     return EFI_DEVICE_ERROR;
   }
@@ -747,7 +747,7 @@ STATIC EFI_STATUS axp22_set_dldo2(int set_vol, int onoff)
   {
     reg_value |=  (1 << 4);
   }
-  if(AxpPmBusWrite(AXP22X_ADDR, BOOT_POWER22_OUTPUT_CTL2, reg_value))
+  if(AxpI2cWrite(This, AXP22X_ADDR, BOOT_POWER22_OUTPUT_CTL2, reg_value))
   {
     DEBUG((EFI_D_ERROR,"sunxi pmu error : unable to onoff dldo2\n"));
     return EFI_DEVICE_ERROR;
@@ -771,7 +771,7 @@ STATIC EFI_STATUS axp22_set_dldo2(int set_vol, int onoff)
 *
 ************************************************************************************************************
 */
-STATIC EFI_STATUS axp22_set_dldo3(int set_vol, int onoff)
+STATIC EFI_STATUS axp22_set_dldo3(IN CONST AXP_POWER_PROTOCOL *This, int set_vol, int onoff)
 {
   UINT8 reg_value;
 
@@ -785,13 +785,13 @@ STATIC EFI_STATUS axp22_set_dldo3(int set_vol, int onoff)
     {
       set_vol = 3300;
     }
-    if(AxpPmBusRead(AXP22X_ADDR, BOOT_POWER22_DLDO3_VOL, &reg_value))
+    if(AxpI2cRead(This, AXP22X_ADDR, BOOT_POWER22_DLDO3_VOL, &reg_value))
     {
       return EFI_DEVICE_ERROR;
     }
     reg_value &= 0xE0;
     reg_value |= ((set_vol - 700)/100);
-    if(AxpPmBusWrite(AXP22X_ADDR, BOOT_POWER22_DLDO3_VOL, reg_value))
+    if(AxpI2cWrite(This, AXP22X_ADDR, BOOT_POWER22_DLDO3_VOL, reg_value))
     {
       DEBUG((EFI_D_ERROR,"sunxi pmu error : unable to set dldo3\n"));
       return EFI_DEVICE_ERROR;
@@ -802,7 +802,7 @@ STATIC EFI_STATUS axp22_set_dldo3(int set_vol, int onoff)
   {
     return EFI_SUCCESS;
   }
-  if(AxpPmBusRead(AXP22X_ADDR, BOOT_POWER22_OUTPUT_CTL2, &reg_value))
+  if(AxpI2cRead(This, AXP22X_ADDR, BOOT_POWER22_OUTPUT_CTL2, &reg_value))
   {
     return EFI_DEVICE_ERROR;
   }
@@ -814,7 +814,7 @@ STATIC EFI_STATUS axp22_set_dldo3(int set_vol, int onoff)
   {
     reg_value |=  (1 << 5);
   }
-  if(AxpPmBusWrite(AXP22X_ADDR, BOOT_POWER22_OUTPUT_CTL2, reg_value))
+  if(AxpI2cWrite(This, AXP22X_ADDR, BOOT_POWER22_OUTPUT_CTL2, reg_value))
   {
     DEBUG((EFI_D_ERROR,"sunxi pmu error : unable to onoff dldo3\n"));
     return EFI_DEVICE_ERROR;
@@ -838,7 +838,7 @@ STATIC EFI_STATUS axp22_set_dldo3(int set_vol, int onoff)
 *
 ************************************************************************************************************
 */
-STATIC EFI_STATUS axp22_set_dldo4(int set_vol, int onoff)
+STATIC EFI_STATUS axp22_set_dldo4(IN CONST AXP_POWER_PROTOCOL *This, int set_vol, int onoff)
 {
   UINT8 reg_value;
 
@@ -852,13 +852,13 @@ STATIC EFI_STATUS axp22_set_dldo4(int set_vol, int onoff)
     {
       set_vol = 3300;
     }
-    if(AxpPmBusRead(AXP22X_ADDR, BOOT_POWER22_DLDO4_VOL, &reg_value))
+    if(AxpI2cRead(This, AXP22X_ADDR, BOOT_POWER22_DLDO4_VOL, &reg_value))
     {
       return EFI_DEVICE_ERROR;
     }
     reg_value &= 0xE0;
     reg_value |= ((set_vol - 700)/100);
-    if(AxpPmBusWrite(AXP22X_ADDR, BOOT_POWER22_DLDO4_VOL, reg_value))
+    if(AxpI2cWrite(This, AXP22X_ADDR, BOOT_POWER22_DLDO4_VOL, reg_value))
     {
       DEBUG((EFI_D_ERROR,"sunxi pmu error : unable to set dldo4\n"));
       return EFI_DEVICE_ERROR;
@@ -869,7 +869,7 @@ STATIC EFI_STATUS axp22_set_dldo4(int set_vol, int onoff)
   {
     return EFI_SUCCESS;
   }
-  if(AxpPmBusRead(AXP22X_ADDR, BOOT_POWER22_OUTPUT_CTL2, &reg_value))
+  if(AxpI2cRead(This, AXP22X_ADDR, BOOT_POWER22_OUTPUT_CTL2, &reg_value))
   {
     return EFI_DEVICE_ERROR;
   }
@@ -881,7 +881,7 @@ STATIC EFI_STATUS axp22_set_dldo4(int set_vol, int onoff)
   {
     reg_value |=  (1 << 6);
   }
-  if(AxpPmBusWrite(AXP22X_ADDR, BOOT_POWER22_OUTPUT_CTL2, reg_value))
+  if(AxpI2cWrite(This, AXP22X_ADDR, BOOT_POWER22_OUTPUT_CTL2, reg_value))
   {
     DEBUG((EFI_D_ERROR,"sunxi pmu error : unable to onoff dldo4\n"));
     return EFI_DEVICE_ERROR;
@@ -905,7 +905,7 @@ STATIC EFI_STATUS axp22_set_dldo4(int set_vol, int onoff)
 *
 ************************************************************************************************************
 */
-STATIC EFI_STATUS axp22_set_eldo1(int set_vol, int onoff)
+STATIC EFI_STATUS axp22_set_eldo1(IN CONST AXP_POWER_PROTOCOL *This, int set_vol, int onoff)
 {
   UINT8 reg_value;
 
@@ -919,13 +919,13 @@ STATIC EFI_STATUS axp22_set_eldo1(int set_vol, int onoff)
     {
       set_vol = 3300;
     }
-    if(AxpPmBusRead(AXP22X_ADDR, BOOT_POWER22_ELDO1_VOL, &reg_value))
+    if(AxpI2cRead(This, AXP22X_ADDR, BOOT_POWER22_ELDO1_VOL, &reg_value))
     {
       return EFI_DEVICE_ERROR;
     }
     reg_value &= 0xE0;
     reg_value |= ((set_vol - 700)/100);
-    if(AxpPmBusWrite(AXP22X_ADDR, BOOT_POWER22_ELDO1_VOL, reg_value))
+    if(AxpI2cWrite(This, AXP22X_ADDR, BOOT_POWER22_ELDO1_VOL, reg_value))
     {
       DEBUG((EFI_D_ERROR,"sunxi pmu error : unable to set eldo1\n"));
       return EFI_DEVICE_ERROR;
@@ -936,7 +936,7 @@ STATIC EFI_STATUS axp22_set_eldo1(int set_vol, int onoff)
   {
     return EFI_SUCCESS;
   }
-  if(AxpPmBusRead(AXP22X_ADDR, BOOT_POWER22_OUTPUT_CTL2, &reg_value))
+  if(AxpI2cRead(This, AXP22X_ADDR, BOOT_POWER22_OUTPUT_CTL2, &reg_value))
   {
     return EFI_DEVICE_ERROR;
   }
@@ -948,7 +948,7 @@ STATIC EFI_STATUS axp22_set_eldo1(int set_vol, int onoff)
   {
     reg_value |=  (1 << 0);
   }
-  if(AxpPmBusWrite(AXP22X_ADDR, BOOT_POWER22_OUTPUT_CTL2, reg_value))
+  if(AxpI2cWrite(This, AXP22X_ADDR, BOOT_POWER22_OUTPUT_CTL2, reg_value))
   {
     DEBUG((EFI_D_ERROR,"sunxi pmu error : unable to onoff eldo1\n"));
     return EFI_DEVICE_ERROR;
@@ -972,7 +972,7 @@ STATIC EFI_STATUS axp22_set_eldo1(int set_vol, int onoff)
 *
 ************************************************************************************************************
 */
-STATIC EFI_STATUS axp22_set_eldo2(int set_vol, int onoff)
+STATIC EFI_STATUS axp22_set_eldo2(IN CONST AXP_POWER_PROTOCOL *This, int set_vol, int onoff)
 {
   UINT8 reg_value;
 
@@ -986,13 +986,13 @@ STATIC EFI_STATUS axp22_set_eldo2(int set_vol, int onoff)
     {
       set_vol = 3300;
     }
-    if(AxpPmBusRead(AXP22X_ADDR, BOOT_POWER22_ELDO2_VOL, &reg_value))
+    if(AxpI2cRead(This, AXP22X_ADDR, BOOT_POWER22_ELDO2_VOL, &reg_value))
     {
       return EFI_DEVICE_ERROR;
     }
     reg_value &= 0xE0;
     reg_value |= ((set_vol - 700)/100);
-    if(AxpPmBusWrite(AXP22X_ADDR, BOOT_POWER22_ELDO2_VOL, reg_value))
+    if(AxpI2cWrite(This, AXP22X_ADDR, BOOT_POWER22_ELDO2_VOL, reg_value))
     {
       DEBUG((EFI_D_ERROR,"sunxi pmu error : unable to set eldo2\n"));
       return EFI_DEVICE_ERROR;
@@ -1003,7 +1003,7 @@ STATIC EFI_STATUS axp22_set_eldo2(int set_vol, int onoff)
   {
     return EFI_SUCCESS;
   }
-  if(AxpPmBusRead(AXP22X_ADDR, BOOT_POWER22_OUTPUT_CTL2, &reg_value))
+  if(AxpI2cRead(This, AXP22X_ADDR, BOOT_POWER22_OUTPUT_CTL2, &reg_value))
   {
     return EFI_DEVICE_ERROR;
   }
@@ -1015,7 +1015,7 @@ STATIC EFI_STATUS axp22_set_eldo2(int set_vol, int onoff)
   {
     reg_value |=  (1 << 1);
   }
-  if(AxpPmBusWrite(AXP22X_ADDR, BOOT_POWER22_OUTPUT_CTL2, reg_value))
+  if(AxpI2cWrite(This, AXP22X_ADDR, BOOT_POWER22_OUTPUT_CTL2, reg_value))
   {
     DEBUG((EFI_D_ERROR,"sunxi pmu error : unable to onoff eldo2\n"));
     return EFI_DEVICE_ERROR;
@@ -1039,7 +1039,7 @@ STATIC EFI_STATUS axp22_set_eldo2(int set_vol, int onoff)
 *
 ************************************************************************************************************
 */
-STATIC EFI_STATUS axp22_set_eldo3(int set_vol, int onoff)
+STATIC EFI_STATUS axp22_set_eldo3(IN CONST AXP_POWER_PROTOCOL *This, int set_vol, int onoff)
 {
   UINT8 reg_value;
 
@@ -1053,13 +1053,13 @@ STATIC EFI_STATUS axp22_set_eldo3(int set_vol, int onoff)
     {
       set_vol = 3300;
     }
-    if(AxpPmBusRead(AXP22X_ADDR, BOOT_POWER22_ELDO3_VOL, &reg_value))
+    if(AxpI2cRead(This, AXP22X_ADDR, BOOT_POWER22_ELDO3_VOL, &reg_value))
     {
       return EFI_DEVICE_ERROR;
     }
     reg_value &= 0xE0;
     reg_value |= ((set_vol - 700)/100);
-    if(AxpPmBusWrite(AXP22X_ADDR, BOOT_POWER22_ELDO3_VOL, reg_value))
+    if(AxpI2cWrite(This, AXP22X_ADDR, BOOT_POWER22_ELDO3_VOL, reg_value))
     {
       DEBUG((EFI_D_ERROR,"sunxi pmu error : unable to set eldo3\n"));
       return EFI_DEVICE_ERROR;
@@ -1070,7 +1070,7 @@ STATIC EFI_STATUS axp22_set_eldo3(int set_vol, int onoff)
   {
     return EFI_SUCCESS;
   }
-  if(AxpPmBusRead(AXP22X_ADDR, BOOT_POWER22_OUTPUT_CTL2, &reg_value))
+  if(AxpI2cRead(This, AXP22X_ADDR, BOOT_POWER22_OUTPUT_CTL2, &reg_value))
   {
     return EFI_DEVICE_ERROR;
   }
@@ -1082,7 +1082,7 @@ STATIC EFI_STATUS axp22_set_eldo3(int set_vol, int onoff)
   {
     reg_value |=  (1 << 2);
   }
-  if(AxpPmBusWrite(AXP22X_ADDR, BOOT_POWER22_OUTPUT_CTL2, reg_value))
+  if(AxpI2cWrite(This, AXP22X_ADDR, BOOT_POWER22_OUTPUT_CTL2, reg_value))
   {
     DEBUG((EFI_D_ERROR,"sunxi pmu error : unable to onoff edlo3\n"));
     return EFI_DEVICE_ERROR;
@@ -1106,7 +1106,7 @@ STATIC EFI_STATUS axp22_set_eldo3(int set_vol, int onoff)
 *
 ************************************************************************************************************
 */
-STATIC EFI_STATUS axp22_set_gpio0ldo(int set_vol, int onoff)
+STATIC EFI_STATUS axp22_set_gpio0ldo(IN CONST AXP_POWER_PROTOCOL *This, int set_vol, int onoff)
 {
   UINT8 reg_value;
 
@@ -1120,13 +1120,13 @@ STATIC EFI_STATUS axp22_set_gpio0ldo(int set_vol, int onoff)
     {
       set_vol = 3300;
     }
-    if(AxpPmBusRead(AXP22X_ADDR, BOOT_POWER22_GPIO0_VOL, &reg_value))
+    if(AxpI2cRead(This, AXP22X_ADDR, BOOT_POWER22_GPIO0_VOL, &reg_value))
     {
       return EFI_DEVICE_ERROR;
     }
     reg_value &= 0xE0;
     reg_value |= ((set_vol - 700)/100);
-    if(AxpPmBusWrite(AXP22X_ADDR, BOOT_POWER22_GPIO0_VOL, reg_value))
+    if(AxpI2cWrite(This, AXP22X_ADDR, BOOT_POWER22_GPIO0_VOL, reg_value))
     {
       DEBUG((EFI_D_ERROR,"sunxi pmu error : unable to set gpio0ldo\n"));
       return EFI_DEVICE_ERROR;
@@ -1137,7 +1137,7 @@ STATIC EFI_STATUS axp22_set_gpio0ldo(int set_vol, int onoff)
   {
     return EFI_SUCCESS;
   }
-  if(AxpPmBusRead(AXP22X_ADDR, BOOT_POWER22_GPIO0_CTL, &reg_value))
+  if(AxpI2cRead(This, AXP22X_ADDR, BOOT_POWER22_GPIO0_CTL, &reg_value))
   {
     return EFI_DEVICE_ERROR;
   }
@@ -1151,7 +1151,7 @@ STATIC EFI_STATUS axp22_set_gpio0ldo(int set_vol, int onoff)
     reg_value &= ~(7 << 0);
     reg_value |=  (2 << 0);
   }
-  if(AxpPmBusWrite(AXP22X_ADDR, BOOT_POWER22_GPIO0_CTL, reg_value))
+  if(AxpI2cWrite(This, AXP22X_ADDR, BOOT_POWER22_GPIO0_CTL, reg_value))
   {
     DEBUG((EFI_D_ERROR,"sunxi pmu error : unable to onoff gpio0ldo\n"));
     return EFI_DEVICE_ERROR;
@@ -1175,7 +1175,7 @@ STATIC EFI_STATUS axp22_set_gpio0ldo(int set_vol, int onoff)
 *
 ************************************************************************************************************
 */
-STATIC EFI_STATUS axp22_set_gpio1ldo(int set_vol, int onoff)
+STATIC EFI_STATUS axp22_set_gpio1ldo(IN CONST AXP_POWER_PROTOCOL *This, int set_vol, int onoff)
 {
   UINT8 reg_value;
 
@@ -1189,13 +1189,13 @@ STATIC EFI_STATUS axp22_set_gpio1ldo(int set_vol, int onoff)
     {
       set_vol = 3300;
     }
-    if(AxpPmBusRead(AXP22X_ADDR, BOOT_POWER22_GPIO1_VOL, &reg_value))
+    if(AxpI2cRead(This, AXP22X_ADDR, BOOT_POWER22_GPIO1_VOL, &reg_value))
     {
       return EFI_DEVICE_ERROR;
     }
     reg_value &= 0xE0;
     reg_value |= ((set_vol - 700)/100);
-    if(AxpPmBusWrite(AXP22X_ADDR, BOOT_POWER22_GPIO1_VOL, reg_value))
+    if(AxpI2cWrite(This, AXP22X_ADDR, BOOT_POWER22_GPIO1_VOL, reg_value))
     {
       DEBUG((EFI_D_ERROR,"sunxi pmu error : unable to set gpio1ldo\n"));
       return EFI_DEVICE_ERROR;
@@ -1206,7 +1206,7 @@ STATIC EFI_STATUS axp22_set_gpio1ldo(int set_vol, int onoff)
   {
     return EFI_SUCCESS;
   }
-  if(AxpPmBusRead(AXP22X_ADDR, BOOT_POWER22_GPIO1_CTL, &reg_value))
+  if(AxpI2cRead(This, AXP22X_ADDR, BOOT_POWER22_GPIO1_CTL, &reg_value))
   {
     return EFI_DEVICE_ERROR;
   }
@@ -1220,7 +1220,7 @@ STATIC EFI_STATUS axp22_set_gpio1ldo(int set_vol, int onoff)
     reg_value &= ~(7 << 0);
     reg_value |=  (2 << 0);
   }
-  if(AxpPmBusWrite(AXP22X_ADDR, BOOT_POWER22_GPIO1_CTL, reg_value))
+  if(AxpI2cWrite(This, AXP22X_ADDR, BOOT_POWER22_GPIO1_CTL, reg_value))
   {
     DEBUG((EFI_D_ERROR,"sunxi pmu error : unable to onoff gpio1ldo\n"));
     return EFI_DEVICE_ERROR;
@@ -1244,100 +1244,100 @@ STATIC EFI_STATUS axp22_set_gpio1ldo(int set_vol, int onoff)
 *
 ************************************************************************************************************
 */
-STATIC EFI_STATUS axp22_set_dcdc_output(int sppply_index, int vol_value, int onoff)
+STATIC EFI_STATUS axp22_set_dcdc_output(IN CONST AXP_POWER_PROTOCOL *This, int sppply_index, int vol_value, int onoff)
 {
   switch(sppply_index)
   {
     case 1:
-      return axp22_set_dcdc1(vol_value, onoff);
+      return axp22_set_dcdc1(This, vol_value, onoff);
     case 2:
-      return axp22_set_dcdc2(vol_value, onoff);
+      return axp22_set_dcdc2(This, vol_value, onoff);
     case 3:
-      return axp22_set_dcdc3(vol_value, onoff);
+      return axp22_set_dcdc3(This, vol_value, onoff);
     case 4:
-      return axp22_set_dcdc4(vol_value, onoff);
+      return axp22_set_dcdc4(This, vol_value, onoff);
     case 5:
-      return axp22_set_dcdc5(vol_value, onoff);
+      return axp22_set_dcdc5(This, vol_value, onoff);
   }
 
   return EFI_UNSUPPORTED;
 }
 
-STATIC EFI_STATUS axp22_set_aldo_output(int sppply_index, int vol_value, int onoff)
+STATIC EFI_STATUS axp22_set_aldo_output(IN CONST AXP_POWER_PROTOCOL *This, int sppply_index, int vol_value, int onoff)
 {
   switch(sppply_index)
   {
     case 1:
-      return axp22_set_aldo1(vol_value, onoff);
+      return axp22_set_aldo1(This, vol_value, onoff);
     case 2:
-      return axp22_set_aldo2(vol_value, onoff);
+      return axp22_set_aldo2(This, vol_value, onoff);
     case 3:
-      return axp22_set_aldo3(vol_value, onoff);
+      return axp22_set_aldo3(This, vol_value, onoff);
   }
 
   return EFI_UNSUPPORTED;
 }
 
-STATIC EFI_STATUS axp22_set_dldo_output(int sppply_index, int vol_value, int onoff)
+STATIC EFI_STATUS axp22_set_dldo_output(IN CONST AXP_POWER_PROTOCOL *This, int sppply_index, int vol_value, int onoff)
 {
   switch(sppply_index)
   {
     case 1:
-      return axp22_set_dldo1(vol_value, onoff);
+      return axp22_set_dldo1(This, vol_value, onoff);
     case 2:
-      return axp22_set_dldo2(vol_value, onoff);
+      return axp22_set_dldo2(This, vol_value, onoff);
     case 3:
-      return axp22_set_dldo3(vol_value, onoff);
+      return axp22_set_dldo3(This, vol_value, onoff);
     case 4:
-      return axp22_set_dldo4(vol_value, onoff);
+      return axp22_set_dldo4(This, vol_value, onoff);
   }
 
   return EFI_UNSUPPORTED;
 }
 
-STATIC EFI_STATUS axp22_set_eldo_output(int sppply_index, int vol_value, int onoff)
+STATIC EFI_STATUS axp22_set_eldo_output(IN CONST AXP_POWER_PROTOCOL *This, int sppply_index, int vol_value, int onoff)
 {
   switch(sppply_index)
   {
     case 1:
-      return axp22_set_eldo1(vol_value, onoff);
+      return axp22_set_eldo1(This, vol_value, onoff);
     case 2:
-      return axp22_set_eldo2(vol_value, onoff);
+      return axp22_set_eldo2(This, vol_value, onoff);
     case 3:
-      return axp22_set_eldo3(vol_value, onoff);
+      return axp22_set_eldo3(This, vol_value, onoff);
   }
 
   return EFI_UNSUPPORTED;
 }
 
-STATIC EFI_STATUS axp22_set_gpioldo_output(int sppply_index, int vol_value, int onoff)
+STATIC EFI_STATUS axp22_set_gpioldo_output(IN CONST AXP_POWER_PROTOCOL *This, int sppply_index, int vol_value, int onoff)
 {
   switch(sppply_index)
   {
     case 1:
-      return axp22_set_gpio0ldo(vol_value, onoff);
+      return axp22_set_gpio0ldo(This, vol_value, onoff);
     case 2:
-      return axp22_set_gpio1ldo(vol_value, onoff);
+      return axp22_set_gpio1ldo(This, vol_value, onoff);
   }
 
   return EFI_UNSUPPORTED;
 }
 
-STATIC EFI_STATUS axp22_set_misc_output(int sppply_index, int vol_value, int onoff)
+STATIC EFI_STATUS axp22_set_misc_output(IN CONST AXP_POWER_PROTOCOL *This, int sppply_index, int vol_value, int onoff)
 {
   switch(sppply_index)
   {
     case PMU_SUPPLY_DC5LDO:
-      return axp22_set_dc5ldo(onoff);
+      return axp22_set_dc5ldo(This, onoff);
     case PMU_SUPPLY_DC1SW:
-      return axp22_set_dc1sw(onoff);
+      return axp22_set_dc1sw(This, onoff);
   }
 
   return EFI_UNSUPPORTED;
 }
 
 
-EFI_STATUS Axp22xSetSupplyStatus(IN UINTN VoltageIndex, IN UINTN Voltage, IN INTN OnOff)
+EFI_STATUS Axp22xSetSupplyStatus(IN CONST AXP_POWER_PROTOCOL *This, IN UINTN VoltageIndex, IN UINTN Voltage, IN INTN OnOff)
 {
   int supply_type;
   int sppply_index;
@@ -1348,29 +1348,29 @@ EFI_STATUS Axp22xSetSupplyStatus(IN UINTN VoltageIndex, IN UINTN Voltage, IN INT
   switch(supply_type)
   {
     case PMU_SUPPLY_DCDC_TYPE:
-      return axp22_set_dcdc_output(sppply_index, Voltage, OnOff);
+      return axp22_set_dcdc_output(This, sppply_index, Voltage, OnOff);
 
     case PMU_SUPPLY_ALDO_TYPE:
-      return axp22_set_aldo_output(sppply_index, Voltage, OnOff);
+      return axp22_set_aldo_output(This, sppply_index, Voltage, OnOff);
 
     case PMU_SUPPLY_ELDO_TYPE:
-      return axp22_set_eldo_output(sppply_index, Voltage, OnOff);
+      return axp22_set_eldo_output(This, sppply_index, Voltage, OnOff);
 
     case PMU_SUPPLY_DLDO_TYPE:
-      return axp22_set_dldo_output(sppply_index, Voltage, OnOff);
+      return axp22_set_dldo_output(This, sppply_index, Voltage, OnOff);
 
     case PMU_SUPPLY_GPIOLDO_TYPE:
-      return axp22_set_gpioldo_output(sppply_index, Voltage, OnOff);
+      return axp22_set_gpioldo_output(This, sppply_index, Voltage, OnOff);
 
     case PMU_SUPPLY_MISC_TYPE:
-      return axp22_set_misc_output(VoltageIndex, Voltage, OnOff);
+      return axp22_set_misc_output(This, VoltageIndex, Voltage, OnOff);
 
     default:
       return EFI_UNSUPPORTED;
   }
 }
 
-EFI_STATUS Axp22xSetSupplyStatusByName(IN CHAR8 *VoltageName,IN UINTN Voltage, IN INTN OnOff)
+EFI_STATUS Axp22xSetSupplyStatusByName(IN CONST AXP_POWER_PROTOCOL *This, IN CHAR8 *VoltageName,IN UINTN Voltage, IN INTN OnOff)
 {
   int sppply_index;
 
@@ -1378,37 +1378,37 @@ EFI_STATUS Axp22xSetSupplyStatusByName(IN CHAR8 *VoltageName,IN UINTN Voltage, I
   {
     sppply_index = AsciiStrDecimalToUintn(VoltageName + 4);
 
-    return axp22_set_dcdc_output(sppply_index, Voltage, OnOff);
+    return axp22_set_dcdc_output(This, sppply_index, Voltage, OnOff);
   }
   else if(!AsciiStrnCmp(VoltageName, "aldo", 4))
   {
     sppply_index = AsciiStrDecimalToUintn(VoltageName + 4);
 
-    return axp22_set_aldo_output(sppply_index, Voltage, OnOff);
+    return axp22_set_aldo_output(This, sppply_index, Voltage, OnOff);
   }
   else if(!AsciiStrnCmp(VoltageName, "eldo", 4))
   {
     sppply_index = AsciiStrDecimalToUintn(VoltageName + 4);
 
-    return axp22_set_eldo_output(sppply_index, Voltage, OnOff);
+    return axp22_set_eldo_output(This, sppply_index, Voltage, OnOff);
   }
   else if(!AsciiStrnCmp(VoltageName, "dldo", 4))
   {
     sppply_index = AsciiStrDecimalToUintn(VoltageName + 4);
 
-    return axp22_set_dldo_output(sppply_index, Voltage, OnOff);
+    return axp22_set_dldo_output(This, sppply_index, Voltage, OnOff);
   }
   else if(!AsciiStrnCmp(VoltageName, "gpio", 4))
   {
     sppply_index = AsciiStrDecimalToUintn(VoltageName + 4);
 
-    return axp22_set_gpioldo_output(sppply_index, Voltage, OnOff);
+    return axp22_set_gpioldo_output(This, sppply_index, Voltage, OnOff);
   }
 
   return EFI_UNSUPPORTED;
 }
 
-EFI_STATUS Axp22xProbeSupplyStatus(IN UINTN VoltageIndex,IN UINTN  *Voltage, IN INTN *OnOff)
+EFI_STATUS Axp22xProbeSupplyStatus(IN CONST AXP_POWER_PROTOCOL *This, IN UINTN VoltageIndex,IN UINTN  *Voltage, IN INTN *OnOff)
 {
   return EFI_UNSUPPORTED;
 }

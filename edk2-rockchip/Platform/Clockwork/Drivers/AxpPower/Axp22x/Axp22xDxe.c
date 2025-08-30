@@ -35,10 +35,6 @@ STATIC EFI_STATUS Axp22xI2cRead(
   UINT8 DeviceRegister,
   UINT8 *Buffer
 ) {
-  //UINTN                    DeviceBufferLength = 1 + 1; //device address + data
-  //UINT8                    DeviceBuffer[2];
-  //EFI_SMBUS_DEVICE_ADDRESS AxpSlaveAddress;
-
   EFI_I2C_REQUEST_PACKET    *RequestPacket;
   UINTN                     RequestPacketSize;
   EFI_STATUS                Status                  = EFI_SUCCESS;
@@ -54,13 +50,26 @@ STATIC EFI_STATUS Axp22xI2cRead(
 
   RequestPacket -> OperationCount = 2;
 
+  RequestPacket->Operation[0].Flags         = 0;
+  RequestPacket->Operation[0].LengthInBytes = 1;
+  RequestPacket->Operation[0].Buffer        = &DeviceRegister;
 
-  /*
-  AxpSlaveAddress.SmbusDeviceAddress = AXP22X_ADDR>>1;
-  DeviceBuffer[0] = DeviceRegister;
-  Status = Smbus->Execute(Smbus,AxpSlaveAddress,0,\
-  EfiSmbusReadBlock, FALSE, &DeviceBufferLength, DeviceBuffer);
-  Buffer[0] = DeviceBuffer[1];*/
+  RequestPacket->Operation[1].Flags         = I2C_FLAG_READ;
+  RequestPacket->Operation[1].LengthInBytes = 1;
+  RequestPacket->Operation[1].Buffer        = Buffer;
+
+  This -> I2cIo -> QueueRequest (
+    This -> I2cIo,
+    0,
+    NULL,
+    RequestPacket,
+    NULL
+  );
+
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_INFO, "Axp22xI2cRead: error %d during transmission\n", Status));
+  }
+
   return Status;
 }
 
@@ -70,18 +79,46 @@ STATIC EFI_STATUS Axp22xI2cWrite(
   UINT8 DeviceRegister,
   UINT8 data
 ) {
-  EFI_STATUS               Status = EFI_UNSUPPORTED;
-  /*
-  UINTN                    DeviceBufferLength = 1 + 1; //device address + data
-  UINT8                    DeviceBuffer[2];
-  EFI_SMBUS_DEVICE_ADDRESS AxpSlaveAddress; 
-  
-  AxpSlaveAddress.SmbusDeviceAddress = AXP22X_ADDR>>1;
-  DeviceBuffer[0] = DeviceRegister;
-  DeviceBuffer[1] = data;
+  EFI_I2C_REQUEST_PACKET    *RequestPacket;
+  UINTN                     RequestPacketSize;
+  EFI_STATUS                Status                  = EFI_SUCCESS;
+  UINT8                     *Data;
 
-  Status = Smbus->Execute(Smbus, AxpSlaveAddress, 0,\
-  EfiSmbusWriteBlock, FALSE, &DeviceBufferLength, DeviceBuffer);*/
+  ASSERT (This -> I2cIo != NULL);
+
+  RequestPacketSize  = sizeof (UINTN) + sizeof (EFI_I2C_OPERATION) * 2;
+  RequestPacket      = AllocateZeroPool (RequestPacketSize);
+
+  if (RequestPacket == NULL) {
+    return EFI_OUT_OF_RESOURCES;
+  }
+
+  Data = AllocateZeroPool (1 + 1); //register + data
+  if (Data == NULL) {
+    return EFI_OUT_OF_RESOURCES;
+  }
+
+  Data[0] = DeviceRegister;
+  Data[1] = data;
+
+  RequestPacket -> OperationCount = 1;
+  
+  RequestPacket->Operation[0].Flags         = 0;
+  RequestPacket->Operation[0].LengthInBytes = 2;
+  RequestPacket->Operation[0].Buffer        = Data;
+
+  This -> I2cIo -> QueueRequest (
+    This -> I2cIo,
+    0,
+    NULL,
+    RequestPacket,
+    NULL
+  );
+
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_INFO, "Axp22xI2cRead: error %d during transmission\n", Status));
+  }
+
   return Status;
 }
 

@@ -20,29 +20,29 @@
 
 #include <Axp22xReg.h>
 
-extern EFI_STATUS Axp22xProbe(VOID);
-extern EFI_STATUS Axp22xSetChargerOnOff(IN UINTN OnOff);
-extern EFI_STATUS Axp22xProbeBatteryRatio(OUT UINTN *Ratio);
-extern EFI_STATUS Axp22xProbePowerBusExistance(OUT UINTN *Status);
-extern EFI_STATUS Axp22xProbeBatteryExistance(OUT UINTN *Status);
-extern EFI_STATUS Axp22xProbeBatteryVoltage(OUT UINTN *Voltage);
-extern EFI_STATUS Axp22xProbePowerKey(OUT UINTN *Pressed);
-extern EFI_STATUS Axp22xProbePreSysMode(OUT UINTN *Status);
-extern EFI_STATUS Axp22xSetNextSysMode(IN UINTN Status);
-extern EFI_STATUS Axp22xProbeThisPowerOnCause(IN UINTN *Status);
-extern EFI_STATUS Axp22xSetPowerOff(VOID);
-extern EFI_STATUS Axp22xSetPowerOnoffVoltage(IN UINTN Voltage,IN UINTN Stage);
-extern EFI_STATUS Axp22xSetChargeCurrent(IN UINTN Current);
-extern EFI_STATUS Axp22xProbeChargeCurrent(OUT UINTN *Current);
-extern EFI_STATUS Axp22xSetVbusCurrentLimit(IN UINTN Current);
-extern EFI_STATUS Axp22xSetVbusVoltagelimit(IN UINTN Voltage);
-extern EFI_STATUS Axp22xProbeIntPending(OUT UINT64 *IntMask);
-extern EFI_STATUS Axp22xProbeIntEnable(OUT UINT64 *IntMask);
-extern EFI_STATUS Axp22xSetIntEnable(IN UINT64 IntMask);
-extern EFI_STATUS Axp22xSetIntDisable(IN UINT64 IntMask);
-extern EFI_STATUS Axp22xSetSupplyStatus(IN UINTN VoltageIndex, IN UINTN Voltage, IN INTN  OnOff);
-extern EFI_STATUS Axp22xSetSupplyStatusByName(IN CHAR8 *VoltageName,IN UINTN  Voltage, IN INTN OnOff);
-extern EFI_STATUS Axp22xProbeSupplyStatus(IN UINTN VoltageIndex,IN UINTN  *Voltage, IN INTN *OnOff);
+extern EFI_STATUS Axp22xProbe(IN CONST AXP_POWER_PROTOCOL *This);
+extern EFI_STATUS Axp22xSetChargerOnOff(IN CONST AXP_POWER_PROTOCOL *This, IN UINTN OnOff);
+extern EFI_STATUS Axp22xProbeBatteryRatio(IN CONST AXP_POWER_PROTOCOL *This, OUT UINTN *Ratio);
+extern EFI_STATUS Axp22xProbePowerBusExistance(IN CONST AXP_POWER_PROTOCOL *This, OUT UINTN *Status);
+extern EFI_STATUS Axp22xProbeBatteryExistance(IN CONST AXP_POWER_PROTOCOL *This, OUT UINTN *Status);
+extern EFI_STATUS Axp22xProbeBatteryVoltage(IN CONST AXP_POWER_PROTOCOL *This, OUT UINTN *Voltage);
+extern EFI_STATUS Axp22xProbePowerKey(IN CONST AXP_POWER_PROTOCOL *This, OUT UINTN *Pressed);
+extern EFI_STATUS Axp22xProbePreSysMode(IN CONST AXP_POWER_PROTOCOL *This, OUT UINTN *Status);
+extern EFI_STATUS Axp22xSetNextSysMode(IN CONST AXP_POWER_PROTOCOL *This, IN UINTN Status);
+extern EFI_STATUS Axp22xProbeThisPowerOnCause(IN CONST AXP_POWER_PROTOCOL *This, IN UINTN *Status);
+extern EFI_STATUS Axp22xSetPowerOff(IN CONST AXP_POWER_PROTOCOL *This);
+extern EFI_STATUS Axp22xSetPowerOnoffVoltage(IN CONST AXP_POWER_PROTOCOL *This, IN UINTN Voltage,IN UINTN Stage);
+extern EFI_STATUS Axp22xSetChargeCurrent(IN CONST AXP_POWER_PROTOCOL *This, IN UINTN Current);
+extern EFI_STATUS Axp22xProbeChargeCurrent(IN CONST AXP_POWER_PROTOCOL *This, OUT UINTN *Current);
+extern EFI_STATUS Axp22xSetVbusCurrentLimit(IN CONST AXP_POWER_PROTOCOL *This, IN UINTN Current);
+extern EFI_STATUS Axp22xSetVbusVoltagelimit(IN CONST AXP_POWER_PROTOCOL *This, IN UINTN Voltage);
+extern EFI_STATUS Axp22xProbeIntPending(IN CONST AXP_POWER_PROTOCOL *This, OUT UINT64 *IntMask);
+extern EFI_STATUS Axp22xProbeIntEnable(IN CONST AXP_POWER_PROTOCOL *This, OUT UINT64 *IntMask);
+extern EFI_STATUS Axp22xSetIntEnable(IN CONST AXP_POWER_PROTOCOL *This, IN UINT64 IntMask);
+extern EFI_STATUS Axp22xSetIntDisable(IN CONST AXP_POWER_PROTOCOL *This, IN UINT64 IntMask);
+extern EFI_STATUS Axp22xSetSupplyStatus(IN CONST AXP_POWER_PROTOCOL *This, IN UINTN VoltageIndex, IN UINTN Voltage, IN INTN  OnOff);
+extern EFI_STATUS Axp22xSetSupplyStatusByName(IN CONST AXP_POWER_PROTOCOL *This, IN CHAR8 *VoltageName,IN UINTN  Voltage, IN INTN OnOff);
+extern EFI_STATUS Axp22xProbeSupplyStatus(IN CONST AXP_POWER_PROTOCOL *This, IN UINTN VoltageIndex,IN UINTN  *Voltage, IN INTN *OnOff);
 
 extern AXP_PM_BUS_OPS Axp22xPmBusOps; 
 
@@ -51,14 +51,14 @@ extern AXP_PM_BUS_OPS Axp22xPmBusOps;
 /// @param addr AXP PMU register address.
 /// @param buffer Payload buffer
 /// @return 
-STATIC inline EFI_STATUS AxpPmBusRead(UINT8 chip, UINT8 addr, UINT8 *buffer)
+STATIC inline EFI_STATUS AxpI2cRead(IN CONST AXP_POWER_PROTOCOL *This, UINT8 chip, UINT8 addr, UINT8 *buffer)
 {
-  return Axp22xPmBusOps.AxpPmBusRead(NULL, chip, addr, buffer);
+  return Axp22xPmBusOps.AxpPmBusRead(This, chip, addr, buffer);
 }
 
-STATIC inline EFI_STATUS AxpPmBusWrite(UINT8 chip, UINT8 addr, UINT8 data)
+STATIC inline EFI_STATUS AxpI2cWrite(IN CONST AXP_POWER_PROTOCOL *This, UINT8 chip, UINT8 addr, UINT8 data)
 {
-  return Axp22xPmBusOps.AxpPmBusWrite(NULL, chip, addr, data);
+  return Axp22xPmBusOps.AxpPmBusWrite(This, chip, addr, data);
 }
 
 

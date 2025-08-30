@@ -24,13 +24,13 @@
 #include <Protocol/AxpPower.h>
 #include <Axp22x.h>
 
-EFI_STATUS __Axp22xSetIntEnable(OUT UINT8 *IntEnable)
+EFI_STATUS __Axp22xSetIntEnable(IN CONST AXP_POWER_PROTOCOL *This, OUT UINT8 *IntEnable)
 {
   UINTN   i;
 
   for(i=0;i<5;i++)
   {
-    if(AxpPmBusWrite(AXP22X_ADDR, BOOT_POWER22_INTEN1 + i, IntEnable[i]))
+    if(AxpI2cWrite(This, AXP22X_ADDR, BOOT_POWER22_INTEN1 + i, IntEnable[i]))
     {
       return EFI_DEVICE_ERROR;
     }
@@ -55,13 +55,13 @@ EFI_STATUS __Axp22xSetIntEnable(OUT UINT8 *IntEnable)
 *
 ************************************************************************************************************
 */
-STATIC EFI_STATUS __Axp22xProbeIntEnable(OUT UINT8 *IntEnable)
+STATIC EFI_STATUS __Axp22xProbeIntEnable(IN CONST AXP_POWER_PROTOCOL *This, OUT UINT8 *IntEnable)
 {
   UINTN   i;
 
   for(i=0;i<5;i++)
   {
-    if(AxpPmBusRead(AXP22X_ADDR, BOOT_POWER22_INTEN1 + i, IntEnable + i))
+    if(AxpI2cRead(This, AXP22X_ADDR, BOOT_POWER22_INTEN1 + i, IntEnable + i))
     {
       return EFI_DEVICE_ERROR;
     }
@@ -86,13 +86,13 @@ STATIC EFI_STATUS __Axp22xProbeIntEnable(OUT UINT8 *IntEnable)
 *
 ************************************************************************************************************
 */
-STATIC EFI_STATUS __Axp22xProbeIntPending(OUT UINT8 *IntStatus)
+STATIC EFI_STATUS __Axp22xProbeIntPending(IN CONST AXP_POWER_PROTOCOL *This, OUT UINT8 *IntStatus)
 {
   UINTN   i;
 
   for(i=0;i<5;i++)
   {
-    if(AxpPmBusRead(AXP22X_ADDR, BOOT_POWER22_INTSTS1 + i, IntStatus + i))
+    if(AxpI2cRead(This, AXP22X_ADDR, BOOT_POWER22_INTSTS1 + i, IntStatus + i))
     {
       return EFI_DEVICE_ERROR;
     }
@@ -100,7 +100,7 @@ STATIC EFI_STATUS __Axp22xProbeIntPending(OUT UINT8 *IntStatus)
 
   for(i=0;i<5;i++)
   {
-    if(AxpPmBusWrite(AXP22X_ADDR, BOOT_POWER22_INTSTS1 + i, 0xff))
+    if(AxpI2cWrite(This, AXP22X_ADDR, BOOT_POWER22_INTSTS1 + i, 0xff))
     {
       return EFI_DEVICE_ERROR;
     }
@@ -126,7 +126,7 @@ STATIC EFI_STATUS __Axp22xProbeIntPending(OUT UINT8 *IntStatus)
 *
 ************************************************************************************************************
 */
-EFI_STATUS Axp22xProbe(VOID)
+EFI_STATUS Axp22xProbe(IN CONST AXP_POWER_PROTOCOL *This)
 {
   UINT8    pmu_type;
   INTN i;
@@ -138,7 +138,7 @@ EFI_STATUS Axp22xProbe(VOID)
     IntReg[i] = 0;      
   }
   
-  if(AxpPmBusRead(AXP22X_ADDR, BOOT_POWER22_VERSION, &pmu_type))
+  if(AxpI2cRead(This, AXP22X_ADDR, BOOT_POWER22_VERSION, &pmu_type))
   {
     DEBUG((EFI_D_ERROR,"axp read error\n"));
     return EFI_DEVICE_ERROR;
@@ -149,10 +149,10 @@ EFI_STATUS Axp22xProbe(VOID)
     /* pmu type AXP221 */
     DEBUG((EFI_D_INIT,"PMU: AXP221\n"));
     /*disable all the interrupt */
-    Status = __Axp22xSetIntEnable(IntReg);
+    Status = __Axp22xSetIntEnable(This, IntReg);
     if(Status) return Status;
     /*clean all the interrupt pendding */
-    return __Axp22xProbeIntPending(IntReg);   
+    return __Axp22xProbeIntPending(This, IntReg);   
   }
 
   return EFI_DEVICE_ERROR;
@@ -173,22 +173,22 @@ EFI_STATUS Axp22xProbe(VOID)
 *
 ************************************************************************************************************
 */
-EFI_STATUS Axp22xSetChargerOnOff(IN UINTN OnOff)
+EFI_STATUS Axp22xSetChargerOnOff(IN CONST AXP_POWER_PROTOCOL *This, IN UINTN OnOff)
 {
   UINT8 RegValue;
   //disable ts adc, enable all other adc
-  if(AxpPmBusRead(AXP22X_ADDR, BOOT_POWER22_ADC_EN, &RegValue))
+  if(AxpI2cRead(This, AXP22X_ADDR, BOOT_POWER22_ADC_EN, &RegValue))
   {
     return EFI_DEVICE_ERROR;
   }
   RegValue |= 0xfe;
-  if(AxpPmBusWrite(AXP22X_ADDR, BOOT_POWER22_ADC_EN, RegValue))
+  if(AxpI2cWrite(This, AXP22X_ADDR, BOOT_POWER22_ADC_EN, RegValue))
   {
     return EFI_DEVICE_ERROR;
   }
 
   //enable charge
-  if(AxpPmBusRead(AXP22X_ADDR, BOOT_POWER22_CHARGE1, &RegValue))
+  if(AxpI2cRead(This, AXP22X_ADDR, BOOT_POWER22_CHARGE1, &RegValue))
   {
     return EFI_DEVICE_ERROR;
   }
@@ -198,7 +198,7 @@ EFI_STATUS Axp22xSetChargerOnOff(IN UINTN OnOff)
   else
     RegValue &=~0x80;
   
-  if(AxpPmBusWrite(AXP22X_ADDR, BOOT_POWER22_CHARGE1, RegValue))
+  if(AxpI2cWrite(This, AXP22X_ADDR, BOOT_POWER22_CHARGE1, RegValue))
   {
     return EFI_DEVICE_ERROR;
   }
@@ -221,11 +221,11 @@ EFI_STATUS Axp22xSetChargerOnOff(IN UINTN OnOff)
 *
 ************************************************************************************************************
 */
-EFI_STATUS Axp22xProbeBatteryRatio(OUT UINTN *Ratio)
+EFI_STATUS Axp22xProbeBatteryRatio(IN CONST AXP_POWER_PROTOCOL *This, OUT UINTN *Ratio)
 {
   UINT8 RegValue;
 
-  if(AxpPmBusRead(AXP22X_ADDR, BOOT_POWER22_COULOMB_CAL, &RegValue))
+  if(AxpI2cRead(This, AXP22X_ADDR, BOOT_POWER22_COULOMB_CAL, &RegValue))
   {
     return EFI_DEVICE_ERROR;
   }
@@ -249,13 +249,13 @@ EFI_STATUS Axp22xProbeBatteryRatio(OUT UINTN *Ratio)
 *
 ************************************************************************************************************
 */
-EFI_STATUS Axp22xProbePowerBusExistance(OUT UINTN *Status)
+EFI_STATUS Axp22xProbePowerBusExistance(IN CONST AXP_POWER_PROTOCOL *This, OUT UINTN *Status)
 {
   UINT8 RegValue;
 
   *Status = 0;
   
-  if(AxpPmBusRead(AXP22X_ADDR, BOOT_POWER22_STATUS, &RegValue))
+  if(AxpI2cRead(This, AXP22X_ADDR, BOOT_POWER22_STATUS, &RegValue))
   {
     return EFI_DEVICE_ERROR;
   }
@@ -286,12 +286,12 @@ EFI_STATUS Axp22xProbePowerBusExistance(OUT UINTN *Status)
 *
 ************************************************************************************************************
 */
-EFI_STATUS Axp22xProbeBatteryExistance(OUT UINTN *Status)
+EFI_STATUS Axp22xProbeBatteryExistance(IN CONST AXP_POWER_PROTOCOL *This, OUT UINTN *Status)
 {
   UINT8 RegValue;
   *Status = 0;
   
-  if(AxpPmBusRead(AXP22X_ADDR, BOOT_POWER22_MODE_CHGSTATUS, &RegValue))
+  if(AxpI2cRead(This, AXP22X_ADDR, BOOT_POWER22_MODE_CHGSTATUS, &RegValue))
   {
     return EFI_DEVICE_ERROR;
   }
@@ -322,16 +322,16 @@ EFI_STATUS Axp22xProbeBatteryExistance(OUT UINTN *Status)
 *
 ************************************************************************************************************
 */
-EFI_STATUS Axp22xProbeBatteryVoltage(OUT UINTN *Voltage)
+EFI_STATUS Axp22xProbeBatteryVoltage(IN CONST AXP_POWER_PROTOCOL *This, OUT UINTN *Voltage)
 {
   UINT8  RegValue_h, RegValue_l;
   UINTN  Value;
 
-  if(AxpPmBusRead(AXP22X_ADDR, BOOT_POWER22_BAT_AVERVOL_H8, &RegValue_h))
+  if(AxpI2cRead(This, AXP22X_ADDR, BOOT_POWER22_BAT_AVERVOL_H8, &RegValue_h))
   {
     return EFI_DEVICE_ERROR;
   }
-  if(AxpPmBusRead(AXP22X_ADDR, BOOT_POWER22_BAT_AVERVOL_L4, &RegValue_l))
+  if(AxpI2cRead(This, AXP22X_ADDR, BOOT_POWER22_BAT_AVERVOL_L4, &RegValue_l))
   {
     return EFI_DEVICE_ERROR;
   }
@@ -357,18 +357,18 @@ EFI_STATUS Axp22xProbeBatteryVoltage(OUT UINTN *Voltage)
 *
 ************************************************************************************************************
 */
-EFI_STATUS Axp22xProbePowerKey(OUT UINTN *Pressed)
+EFI_STATUS Axp22xProbePowerKey(IN CONST AXP_POWER_PROTOCOL *This, OUT UINTN *Pressed)
 {
   UINT8  RegValue;
 
-  if(AxpPmBusRead(AXP22X_ADDR, BOOT_POWER22_INTSTS3, &RegValue))
+  if(AxpI2cRead(This, AXP22X_ADDR, BOOT_POWER22_INTSTS3, &RegValue))
   {
     return EFI_DEVICE_ERROR;
   }
   RegValue &= 0x03;
   if(RegValue)
   {
-    if(AxpPmBusWrite(AXP22X_ADDR, BOOT_POWER22_INTSTS3, RegValue))
+    if(AxpI2cWrite(This, AXP22X_ADDR, BOOT_POWER22_INTSTS3, RegValue))
     {
       return EFI_DEVICE_ERROR;
     }
@@ -392,11 +392,11 @@ EFI_STATUS Axp22xProbePowerKey(OUT UINTN *Pressed)
 *
 ************************************************************************************************************
 */
-EFI_STATUS Axp22xProbePreSysMode(OUT UINTN *Status)
+EFI_STATUS Axp22xProbePreSysMode(IN CONST AXP_POWER_PROTOCOL *This, OUT UINTN *Status)
 {
   UINT8  RegValue;
 
-  if(AxpPmBusRead(AXP22X_ADDR, BOOT_POWER22_DATA_BUFFER11, &RegValue))
+  if(AxpI2cRead(This, AXP22X_ADDR, BOOT_POWER22_DATA_BUFFER11, &RegValue))
   {
     return EFI_DEVICE_ERROR;
   }
@@ -420,9 +420,9 @@ EFI_STATUS Axp22xProbePreSysMode(OUT UINTN *Status)
 *
 ************************************************************************************************************
 */
-EFI_STATUS Axp22xSetNextSysMode(IN UINTN Status)
+EFI_STATUS Axp22xSetNextSysMode(IN CONST AXP_POWER_PROTOCOL *This, IN UINTN Status)
 {
-  if(AxpPmBusWrite(AXP22X_ADDR, BOOT_POWER22_DATA_BUFFER11, (UINT8)Status))
+  if(AxpI2cWrite(This, AXP22X_ADDR, BOOT_POWER22_DATA_BUFFER11, (UINT8)Status))
   {
     return EFI_DEVICE_ERROR;
   }
@@ -445,11 +445,11 @@ EFI_STATUS Axp22xSetNextSysMode(IN UINTN Status)
 *
 ************************************************************************************************************
 */
-EFI_STATUS Axp22xProbeThisPowerOnCause(IN UINTN *Status)
+EFI_STATUS Axp22xProbeThisPowerOnCause(IN CONST AXP_POWER_PROTOCOL *This, IN UINTN *Status)
 {
   UINT8   RegValue;
 
-  if(AxpPmBusRead(AXP22X_ADDR, BOOT_POWER22_STATUS, &RegValue))
+  if(AxpI2cRead(This, AXP22X_ADDR, BOOT_POWER22_STATUS, &RegValue))
   {
     return EFI_DEVICE_ERROR;
   }
@@ -474,16 +474,16 @@ EFI_STATUS Axp22xProbeThisPowerOnCause(IN UINTN *Status)
 *
 ************************************************************************************************************
 */
-EFI_STATUS Axp22xSetPowerOff(VOID)
+EFI_STATUS Axp22xSetPowerOff(IN CONST AXP_POWER_PROTOCOL *This)
 {
   UINT8 RegValue;
 
-  if(AxpPmBusRead(AXP22X_ADDR, BOOT_POWER22_OFF_CTL, &RegValue))
+  if(AxpI2cRead(This, AXP22X_ADDR, BOOT_POWER22_OFF_CTL, &RegValue))
   {
     return EFI_DEVICE_ERROR;
   }
   RegValue |= 1 << 7;
-  if(AxpPmBusWrite(AXP22X_ADDR, BOOT_POWER22_OFF_CTL, RegValue))
+  if(AxpI2cWrite(This, AXP22X_ADDR, BOOT_POWER22_OFF_CTL, RegValue))
   {
     return EFI_DEVICE_ERROR;
   }
@@ -506,7 +506,7 @@ EFI_STATUS Axp22xSetPowerOff(VOID)
 *
 ************************************************************************************************************
 */
-EFI_STATUS Axp22xSetPowerOnoffVoltage(IN UINTN Voltage,IN UINTN Stage)
+EFI_STATUS Axp22xSetPowerOnoffVoltage(IN CONST AXP_POWER_PROTOCOL *This, IN UINTN Voltage,IN UINTN Stage)
 {
   UINT8 RegValue;
 
@@ -521,7 +521,7 @@ EFI_STATUS Axp22xSetPowerOnoffVoltage(IN UINTN Voltage,IN UINTN Stage)
       Voltage = 2900;
     }
   }
-  if(AxpPmBusRead(AXP22X_ADDR, BOOT_POWER22_VOFF_SET, &RegValue))
+  if(AxpI2cRead(This, AXP22X_ADDR, BOOT_POWER22_VOFF_SET, &RegValue))
   {
     return EFI_DEVICE_ERROR;
   }
@@ -538,7 +538,7 @@ EFI_STATUS Axp22xSetPowerOnoffVoltage(IN UINTN Voltage,IN UINTN Stage)
   {
     RegValue |= 0x07;
   }
-  if(AxpPmBusWrite(AXP22X_ADDR, BOOT_POWER22_VOFF_SET, RegValue))
+  if(AxpI2cWrite(This, AXP22X_ADDR, BOOT_POWER22_VOFF_SET, RegValue))
   {
     return EFI_DEVICE_ERROR;
   }
@@ -561,12 +561,12 @@ EFI_STATUS Axp22xSetPowerOnoffVoltage(IN UINTN Voltage,IN UINTN Stage)
 *
 ************************************************************************************************************
 */
-EFI_STATUS Axp22xSetChargeCurrent(IN UINTN Current)
+EFI_STATUS Axp22xSetChargeCurrent(IN CONST AXP_POWER_PROTOCOL *This, IN UINTN Current)
 {
   UINT8   RegValue;
   UINTN  step;
 
-  if(AxpPmBusRead(AXP22X_ADDR, BOOT_POWER22_CHARGE1, &RegValue))
+  if(AxpI2cRead(This, AXP22X_ADDR, BOOT_POWER22_CHARGE1, &RegValue))
   {
     return EFI_DEVICE_ERROR;
   }
@@ -582,7 +582,7 @@ EFI_STATUS Axp22xSetChargeCurrent(IN UINTN Current)
   step       = (Current/150) - 2;
   RegValue |= (step & 0x0f);
 
-  if(AxpPmBusWrite(AXP22X_ADDR, BOOT_POWER22_CHARGE1, RegValue))
+  if(AxpI2cWrite(This, AXP22X_ADDR, BOOT_POWER22_CHARGE1, RegValue))
   {
     return EFI_DEVICE_ERROR;
   }
@@ -605,11 +605,11 @@ EFI_STATUS Axp22xSetChargeCurrent(IN UINTN Current)
 *
 ************************************************************************************************************
 */
-EFI_STATUS Axp22xProbeChargeCurrent(OUT UINTN *Current)
+EFI_STATUS Axp22xProbeChargeCurrent(IN CONST AXP_POWER_PROTOCOL *This, OUT UINTN *Current)
 {
   UINT8  RegValue;
 
-  if(AxpPmBusRead(AXP22X_ADDR, BOOT_POWER22_CHARGE1, &RegValue))
+  if(AxpI2cRead(This, AXP22X_ADDR, BOOT_POWER22_CHARGE1, &RegValue))
   {
     return EFI_DEVICE_ERROR;
   }
@@ -634,12 +634,12 @@ EFI_STATUS Axp22xProbeChargeCurrent(OUT UINTN *Current)
 *
 ************************************************************************************************************
 */
-EFI_STATUS Axp22xSetVbusCurrentLimit(IN UINTN Current)
+EFI_STATUS Axp22xSetVbusCurrentLimit(IN CONST AXP_POWER_PROTOCOL *This, IN UINTN Current)
 {
   UINT8 RegValue;
 
   //set bus current limit off
-  if(AxpPmBusRead(AXP22X_ADDR, BOOT_POWER22_IPS_SET, &RegValue))
+  if(AxpI2cRead(This, AXP22X_ADDR, BOOT_POWER22_IPS_SET, &RegValue))
   {
     return EFI_DEVICE_ERROR;
   }
@@ -656,7 +656,7 @@ EFI_STATUS Axp22xSetVbusCurrentLimit(IN UINTN Current)
   {
     RegValue |= 0;
   }
-  if(AxpPmBusWrite(AXP22X_ADDR, BOOT_POWER22_IPS_SET, RegValue))
+  if(AxpI2cWrite(This, AXP22X_ADDR, BOOT_POWER22_IPS_SET, RegValue))
   {
     return EFI_DEVICE_ERROR;
   }
@@ -679,12 +679,12 @@ EFI_STATUS Axp22xSetVbusCurrentLimit(IN UINTN Current)
 *
 ************************************************************************************************************
 */
-EFI_STATUS Axp22xSetVbusVoltagelimit(IN UINTN Voltage)
+EFI_STATUS Axp22xSetVbusVoltagelimit(IN CONST AXP_POWER_PROTOCOL *This, IN UINTN Voltage)
 {
   UINT8 RegValue;
 
   //set bus vol limit off
-  if(AxpPmBusRead(AXP22X_ADDR, BOOT_POWER22_IPS_SET, &RegValue))
+  if(AxpI2cRead(This, AXP22X_ADDR, BOOT_POWER22_IPS_SET, &RegValue))
   {
     return EFI_DEVICE_ERROR;
   }
@@ -705,7 +705,7 @@ EFI_STATUS Axp22xSetVbusVoltagelimit(IN UINTN Voltage)
     }
     RegValue |= ((Voltage-4000)/100) << 3;
   }
-  if(AxpPmBusWrite(AXP22X_ADDR, BOOT_POWER22_IPS_SET, RegValue))
+  if(AxpI2cWrite(This, AXP22X_ADDR, BOOT_POWER22_IPS_SET, RegValue))
   {
     return EFI_DEVICE_ERROR;
   }
@@ -729,14 +729,14 @@ EFI_STATUS Axp22xSetVbusVoltagelimit(IN UINTN Voltage)
 *
 ************************************************************************************************************
 */
-EFI_STATUS Axp22xProbeIntPending(OUT UINT64 *IntMask)
+EFI_STATUS Axp22xProbeIntPending(IN CONST AXP_POWER_PROTOCOL *This, OUT UINT64 *IntMask)
 {
   UINT8 IntValue[8];
   EFI_STATUS Status;
   
   *IntMask=0;
   
-  Status = __Axp22xProbeIntPending(IntValue);
+  Status = __Axp22xProbeIntPending(This, IntValue);
   if(Status)
     return Status;
   
@@ -768,7 +768,7 @@ EFI_STATUS Axp22xProbeIntPending(OUT UINT64 *IntMask)
 *
 ************************************************************************************************************
 */
-EFI_STATUS Axp22xProbeIntEnable(UINT64 *IntMask)
+EFI_STATUS Axp22xProbeIntEnable(IN CONST AXP_POWER_PROTOCOL *This, UINT64 *IntMask)
 {
   UINT8 IntEnable[8];
   UINTN i;
@@ -779,7 +779,7 @@ EFI_STATUS Axp22xProbeIntEnable(UINT64 *IntMask)
     IntEnable[i] = 0x00;
   }
 
-  Status = __Axp22xProbeIntEnable(IntEnable);
+  Status = __Axp22xProbeIntEnable(This, IntEnable);
   if(Status)
     return Status;
   
@@ -810,7 +810,7 @@ EFI_STATUS Axp22xProbeIntEnable(UINT64 *IntMask)
 *
 ************************************************************************************************************
 */
-EFI_STATUS Axp22xSetIntEnable(IN UINT64 IntMask)
+EFI_STATUS Axp22xSetIntEnable(IN CONST AXP_POWER_PROTOCOL *This, IN UINT64 IntMask)
 {
   UINT8 IntEnable[8];
   UINTN i;
@@ -820,7 +820,7 @@ EFI_STATUS Axp22xSetIntEnable(IN UINT64 IntMask)
   {
     IntEnable[i] = 0x00;
   }
-  Status = __Axp22xProbeIntEnable(IntEnable);
+  Status = __Axp22xProbeIntEnable(This, IntEnable);
   if(Status)
     return Status;
       
@@ -832,7 +832,7 @@ EFI_STATUS Axp22xSetIntEnable(IN UINT64 IntMask)
   if(IntMask & AXP_INT_MASK_LONG_KEY_PRESS)  IntEnable[2] |= 1<<0;
   if(IntMask & AXP_INT_MASK_SHORT_KEY_PRESS) IntEnable[2] |= 1<<1;
   
-  Status = __Axp22xSetIntEnable(IntEnable);
+  Status = __Axp22xSetIntEnable(This, IntEnable);
 
   return Status;
 }
@@ -853,7 +853,7 @@ EFI_STATUS Axp22xSetIntEnable(IN UINT64 IntMask)
 *
 ************************************************************************************************************
 */
-EFI_STATUS Axp22xSetIntDisable(IN UINT64 IntMask)
+EFI_STATUS Axp22xSetIntDisable(IN CONST AXP_POWER_PROTOCOL *This, IN UINT64 IntMask)
 {
   UINT8 IntEnable[8];
   UINTN i;
@@ -863,7 +863,7 @@ EFI_STATUS Axp22xSetIntDisable(IN UINT64 IntMask)
   {
     IntEnable[i] = 0x00;
   }
-  Status = __Axp22xProbeIntEnable(IntEnable);
+  Status = __Axp22xProbeIntEnable(This, IntEnable);
   if(Status)
     return Status;
       
@@ -875,7 +875,7 @@ EFI_STATUS Axp22xSetIntDisable(IN UINT64 IntMask)
   if(IntMask & AXP_INT_MASK_LONG_KEY_PRESS)  IntEnable[2] &= ~1<<0;
   if(IntMask & AXP_INT_MASK_SHORT_KEY_PRESS) IntEnable[2] &= ~1<<1;
   
-  Status = __Axp22xSetIntEnable(IntEnable);
+  Status = __Axp22xSetIntEnable(This, IntEnable);
 
   return Status;
 }
