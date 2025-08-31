@@ -10,4 +10,8 @@
   INF Silicon/Rockchip/Drivers/StatusLedDxe/StatusLedDxe.inf
 !endif
 
+!if $(PLATFORM_VENDOR) == "Clockwork"
+  INF $(VENDOR_DIRECTORY)/Drivers/AxpPower/Axp22x/Axp22xDxe.inf
+!endif
+
   INF MdeModulePkg/Universal/PCD/Dxe/Pcd.inf
