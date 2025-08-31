@@ -39,22 +39,6 @@ EFI_STATUS __Axp22xSetIntEnable(IN CONST AXP_POWER_PROTOCOL *This, OUT UINT8 *In
   return EFI_SUCCESS;
 }
 
-/*
-************************************************************************************************************
-*
-*                                             function
-*
-*    �������ƣ�
-*
-*    �����б���
-*
-*    ����ֵ  ��
-*
-*    ˵��    ��
-*
-*
-************************************************************************************************************
-*/
 STATIC EFI_STATUS __Axp22xProbeIntEnable(IN CONST AXP_POWER_PROTOCOL *This, OUT UINT8 *IntEnable)
 {
   UINTN   i;
@@ -70,22 +54,6 @@ STATIC EFI_STATUS __Axp22xProbeIntEnable(IN CONST AXP_POWER_PROTOCOL *This, OUT 
   return EFI_SUCCESS;
 }
 
-/*
-************************************************************************************************************
-*
-*                                             function
-*
-*    �������ƣ�
-*
-*    �����б���
-*
-*    ����ֵ  ��
-*
-*    ˵��    ��
-*
-*
-************************************************************************************************************
-*/
 STATIC EFI_STATUS __Axp22xProbeIntPending(IN CONST AXP_POWER_PROTOCOL *This, OUT UINT8 *IntStatus)
 {
   UINTN   i;
@@ -109,23 +77,6 @@ STATIC EFI_STATUS __Axp22xProbeIntPending(IN CONST AXP_POWER_PROTOCOL *This, OUT
   return EFI_SUCCESS;
 }
 
-
-/*
-************************************************************************************************************
-*
-*                                             function
-*
-*    �������ƣ�
-*
-*    �����б���
-*
-*    ����ֵ  ��
-*
-*    ˵��    ��
-*
-*
-************************************************************************************************************
-*/
 EFI_STATUS Axp22xProbe(IN CONST AXP_POWER_PROTOCOL *This)
 {
   UINT8    pmu_type;
@@ -157,22 +108,7 @@ EFI_STATUS Axp22xProbe(IN CONST AXP_POWER_PROTOCOL *This)
 
   return EFI_DEVICE_ERROR;
 }
-/*
-************************************************************************************************************
-*
-*                                             function
-*
-*    �������ƣ�
-*
-*    �����б���
-*
-*    ����ֵ  ��
-*
-*    ˵��    ��
-*
-*
-************************************************************************************************************
-*/
+
 EFI_STATUS Axp22xSetChargerOnOff(IN CONST AXP_POWER_PROTOCOL *This, IN UINTN OnOff)
 {
   UINT8 RegValue;
@@ -205,22 +141,7 @@ EFI_STATUS Axp22xSetChargerOnOff(IN CONST AXP_POWER_PROTOCOL *This, IN UINTN OnO
 
   return EFI_SUCCESS;
 }
-/*
-************************************************************************************************************
-*
-*                                             function
-*
-*    �������ƣ�
-*
-*    �����б���
-*
-*    ����ֵ  ��
-*
-*    ˵��    ��
-*
-*
-************************************************************************************************************
-*/
+
 EFI_STATUS Axp22xProbeBatteryRatio(IN CONST AXP_POWER_PROTOCOL *This, OUT UINTN *Ratio)
 {
   UINT8 RegValue;
@@ -233,22 +154,7 @@ EFI_STATUS Axp22xProbeBatteryRatio(IN CONST AXP_POWER_PROTOCOL *This, OUT UINTN 
   *Ratio = RegValue & 0x7f;
   return EFI_SUCCESS;
 }
-/*
-************************************************************************************************************
-*
-*                                             function
-*
-*    �������ƣ�
-*
-*    �����б���
-*
-*    ����ֵ  ��
-*
-*    ˵��    ��
-*
-*
-************************************************************************************************************
-*/
+
 EFI_STATUS Axp22xProbePowerBusExistance(IN CONST AXP_POWER_PROTOCOL *This, OUT UINTN *Status)
 {
   UINT8 RegValue;
@@ -270,22 +176,6 @@ EFI_STATUS Axp22xProbePowerBusExistance(IN CONST AXP_POWER_PROTOCOL *This, OUT U
   return EFI_SUCCESS;
 }
 
-/*
-************************************************************************************************************
-*
-*                                             function
-*
-*    �������ƣ�
-*
-*    �����б���
-*
-*    ����ֵ  ��
-*
-*    ˵��    ��
-*
-*
-************************************************************************************************************
-*/
 EFI_STATUS Axp22xProbeBatteryExistance(IN CONST AXP_POWER_PROTOCOL *This, OUT UINTN *Status)
 {
   UINT8 RegValue;
@@ -306,22 +196,7 @@ EFI_STATUS Axp22xProbeBatteryExistance(IN CONST AXP_POWER_PROTOCOL *This, OUT UI
     return EFI_DEVICE_ERROR;
   }
 }
-/*
-************************************************************************************************************
-*
-*                                             function
-*
-*    �������ƣ�
-*
-*    �����б���
-*
-*    ����ֵ  ��
-*
-*    ˵��    ��
-*
-*
-************************************************************************************************************
-*/
+
 EFI_STATUS Axp22xProbeBatteryVoltage(IN CONST AXP_POWER_PROTOCOL *This, OUT UINTN *Voltage)
 {
   UINT8  RegValue_h, RegValue_l;
@@ -341,22 +216,7 @@ EFI_STATUS Axp22xProbeBatteryVoltage(IN CONST AXP_POWER_PROTOCOL *This, OUT UINT
 
   return EFI_SUCCESS;
 }
-/*
-************************************************************************************************************
-*
-*                                             function
-*
-*    �������ƣ�
-*
-*    �����б���
-*
-*    ����ֵ  ��
-*
-*    ˵��    ��
-*
-*
-************************************************************************************************************
-*/
+
 EFI_STATUS Axp22xProbePowerKey(IN CONST AXP_POWER_PROTOCOL *This, OUT UINTN *Pressed)
 {
   UINT8  RegValue;
@@ -376,22 +236,7 @@ EFI_STATUS Axp22xProbePowerKey(IN CONST AXP_POWER_PROTOCOL *This, OUT UINTN *Pre
   *Pressed = RegValue;
   return EFI_SUCCESS;
 }
-/*
-************************************************************************************************************
-*
-*                                             function
-*
-*    �������ƣ�
-*
-*    �����б���
-*
-*    ����ֵ  ��
-*
-*    ˵��    ��
-*
-*
-************************************************************************************************************
-*/
+
 EFI_STATUS Axp22xProbePreSysMode(IN CONST AXP_POWER_PROTOCOL *This, OUT UINTN *Status)
 {
   UINT8  RegValue;
@@ -404,22 +249,7 @@ EFI_STATUS Axp22xProbePreSysMode(IN CONST AXP_POWER_PROTOCOL *This, OUT UINTN *S
   
   return EFI_SUCCESS;
 }
-/*
-************************************************************************************************************
-*
-*                                             function
-*
-*    �������ƣ�
-*
-*    �����б���
-*
-*    ����ֵ  ��
-*
-*    ˵��    ��
-*
-*
-************************************************************************************************************
-*/
+
 EFI_STATUS Axp22xSetNextSysMode(IN CONST AXP_POWER_PROTOCOL *This, IN UINTN Status)
 {
   if(AxpI2cWrite(This, AXP22X_ADDR, BOOT_POWER22_DATA_BUFFER11, (UINT8)Status))
@@ -429,22 +259,7 @@ EFI_STATUS Axp22xSetNextSysMode(IN CONST AXP_POWER_PROTOCOL *This, IN UINTN Stat
 
   return EFI_SUCCESS;
 }
-/*
-************************************************************************************************************
-*
-*                                             function
-*
-*    �������ƣ�
-*
-*    �����б���
-*
-*    ����ֵ  ��
-*
-*    ˵��    ��
-*
-*
-************************************************************************************************************
-*/
+
 EFI_STATUS Axp22xProbeThisPowerOnCause(IN CONST AXP_POWER_PROTOCOL *This, IN UINTN *Status)
 {
   UINT8   RegValue;
@@ -458,22 +273,7 @@ EFI_STATUS Axp22xProbeThisPowerOnCause(IN CONST AXP_POWER_PROTOCOL *This, IN UIN
   
   return EFI_SUCCESS;
 }
-/*
-************************************************************************************************************
-*
-*                                             function
-*
-*    �������ƣ�
-*
-*    �����б���
-*
-*    ����ֵ  ��
-*
-*    ˵��    ��
-*
-*
-************************************************************************************************************
-*/
+
 EFI_STATUS Axp22xSetPowerOff(IN CONST AXP_POWER_PROTOCOL *This)
 {
   UINT8 RegValue;
@@ -490,22 +290,7 @@ EFI_STATUS Axp22xSetPowerOff(IN CONST AXP_POWER_PROTOCOL *This)
 
   return EFI_SUCCESS;
 }
-/*
-************************************************************************************************************
-*
-*                                             function
-*
-*    �������ƣ�
-*
-*    �����б���
-*
-*    ����ֵ  ��
-*
-*    ˵��    ��
-*
-*
-************************************************************************************************************
-*/
+
 EFI_STATUS Axp22xSetPowerOnoffVoltage(IN CONST AXP_POWER_PROTOCOL *This, IN UINTN Voltage,IN UINTN Stage)
 {
   UINT8 RegValue;
@@ -545,22 +330,7 @@ EFI_STATUS Axp22xSetPowerOnoffVoltage(IN CONST AXP_POWER_PROTOCOL *This, IN UINT
 
   return EFI_SUCCESS;
 }
-/*
-************************************************************************************************************
-*
-*                                             function
-*
-*    �������ƣ�
-*
-*    �����б���
-*
-*    ����ֵ  ��
-*
-*    ˵��    ��
-*
-*
-************************************************************************************************************
-*/
+
 EFI_STATUS Axp22xSetChargeCurrent(IN CONST AXP_POWER_PROTOCOL *This, IN UINTN Current)
 {
   UINT8   RegValue;
@@ -589,22 +359,7 @@ EFI_STATUS Axp22xSetChargeCurrent(IN CONST AXP_POWER_PROTOCOL *This, IN UINTN Cu
 
   return EFI_SUCCESS;
 }
-/*
-************************************************************************************************************
-*
-*                                             function
-*
-*    �������ƣ�
-*
-*    �����б���
-*
-*    ����ֵ  ��
-*
-*    ˵��    ��
-*
-*
-************************************************************************************************************
-*/
+
 EFI_STATUS Axp22xProbeChargeCurrent(IN CONST AXP_POWER_PROTOCOL *This, OUT UINTN *Current)
 {
   UINT8  RegValue;
@@ -618,22 +373,7 @@ EFI_STATUS Axp22xProbeChargeCurrent(IN CONST AXP_POWER_PROTOCOL *This, OUT UINTN
 
   return EFI_SUCCESS;
 }
-/*
-************************************************************************************************************
-*
-*                                             function
-*
-*    �������ƣ�
-*
-*    �����б���
-*
-*    ����ֵ  ��
-*
-*    ˵��    ��
-*
-*
-************************************************************************************************************
-*/
+
 EFI_STATUS Axp22xSetVbusCurrentLimit(IN CONST AXP_POWER_PROTOCOL *This, IN UINTN Current)
 {
   UINT8 RegValue;
@@ -663,22 +403,7 @@ EFI_STATUS Axp22xSetVbusCurrentLimit(IN CONST AXP_POWER_PROTOCOL *This, IN UINTN
 
   return EFI_SUCCESS;
 }
-/*
-************************************************************************************************************
-*
-*                                             function
-*
-*    �������ƣ�
-*
-*    �����б���
-*
-*    ����ֵ  ��
-*
-*    ˵��    ��
-*
-*
-************************************************************************************************************
-*/
+
 EFI_STATUS Axp22xSetVbusVoltagelimit(IN CONST AXP_POWER_PROTOCOL *This, IN UINTN Voltage)
 {
   UINT8 RegValue;
@@ -713,22 +438,6 @@ EFI_STATUS Axp22xSetVbusVoltagelimit(IN CONST AXP_POWER_PROTOCOL *This, IN UINTN
   return EFI_SUCCESS;
 }
 
-/*
-************************************************************************************************************
-*
-*                                             function
-*
-*    �������ƣ�
-*
-*    �����б���
-*
-*    ����ֵ  ��
-*
-*    ˵��    ��
-*
-*
-************************************************************************************************************
-*/
 EFI_STATUS Axp22xProbeIntPending(IN CONST AXP_POWER_PROTOCOL *This, OUT UINT64 *IntMask)
 {
   UINT8 IntValue[8];
@@ -751,23 +460,6 @@ EFI_STATUS Axp22xProbeIntPending(IN CONST AXP_POWER_PROTOCOL *This, OUT UINT64 *
   return EFI_SUCCESS;
 }
 
-
-/*
-************************************************************************************************************
-*
-*                                             function
-*
-*    �������ƣ�
-*
-*    �����б���
-*
-*    ����ֵ  ��
-*
-*    ˵��    ��
-*
-*
-************************************************************************************************************
-*/
 EFI_STATUS Axp22xProbeIntEnable(IN CONST AXP_POWER_PROTOCOL *This, UINT64 *IntMask)
 {
   UINT8 IntEnable[8];
@@ -794,22 +486,6 @@ EFI_STATUS Axp22xProbeIntEnable(IN CONST AXP_POWER_PROTOCOL *This, UINT64 *IntMa
   return EFI_SUCCESS;
 }
 
-/*
-************************************************************************************************************
-*
-*                                             function
-*
-*    �������ƣ�
-*
-*    �����б���
-*
-*    ����ֵ  ��
-*
-*    ˵��    ��
-*
-*
-************************************************************************************************************
-*/
 EFI_STATUS Axp22xSetIntEnable(IN CONST AXP_POWER_PROTOCOL *This, IN UINT64 IntMask)
 {
   UINT8 IntEnable[8];
@@ -837,22 +513,6 @@ EFI_STATUS Axp22xSetIntEnable(IN CONST AXP_POWER_PROTOCOL *This, IN UINT64 IntMa
   return Status;
 }
 
-/*
-************************************************************************************************************
-*
-*                                             function
-*
-*    �������ƣ�
-*
-*    �����б���
-*
-*    ����ֵ  ��
-*
-*    ˵��    ��
-*
-*
-************************************************************************************************************
-*/
 EFI_STATUS Axp22xSetIntDisable(IN CONST AXP_POWER_PROTOCOL *This, IN UINT64 IntMask)
 {
   UINT8 IntEnable[8];

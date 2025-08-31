@@ -42,13 +42,12 @@
   UefiLib
   UefiDriverEntryPoint
   BaseLib
-  
+
 [Guids]
   
 [Protocols]
   gEfiI2cIoProtocolGuid           ## CONSUMES
   gEfiDriverBindingProtocolGuid   ## PRODUCES
-  gEfiSmbusHcProtocolGuid
   gAxpPowerProtocolGuid           ## PRODUCES
 	
 [Pcd]
@@ -56,4 +55,4 @@
   gClockworkTokenSpaceGuid.PcdAxp22xBus
 
 [Depex]
-  TRUE
+  gEfiI2cIoProtocolGuid

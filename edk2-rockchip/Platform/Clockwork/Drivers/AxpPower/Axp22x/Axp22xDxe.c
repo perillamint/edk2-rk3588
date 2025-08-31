@@ -70,6 +70,8 @@ STATIC EFI_STATUS Axp22xI2cRead(
     DEBUG ((DEBUG_INFO, "Axp22xI2cRead: error %d during transmission\n", Status));
   }
 
+  DEBUG ((DEBUG_INFO, "Axp22xI2cRead: Reg 0x%02x = 0x%02x\n", DeviceRegister, *Buffer));
+
   return Status;
 }
 
@@ -118,6 +120,8 @@ STATIC EFI_STATUS Axp22xI2cWrite(
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_INFO, "Axp22xI2cRead: error %d during transmission\n", Status));
   }
+
+  DEBUG ((DEBUG_INFO, "Axp22xI2cWrite: Reg 0x%02x = 0x%02x\n", DeviceRegister, data));
 
   return Status;
 }
@@ -193,7 +197,7 @@ EFI_STATUS EFIAPI Axp22xSupported (
   UINT8                Axp22xAddress;
   UINT8                Axp22xBus;
 
-  DEBUG ((DEBUG_INFO, "Axp22xSupported: Probing Axp22x (sheeeeeee... it is dummy currently)\n"));
+  //DEBUG ((DEBUG_INFO, "Axp22xSupported: Probing Axp22x (sheeeeeee... it is dummy currently)\n"));
 
   Status = gBS->OpenProtocol (
                   ControllerHandle,
@@ -212,6 +216,8 @@ EFI_STATUS EFIAPI Axp22xSupported (
 
   DEBUG ((DEBUG_INFO, "Axp22xSupported: Using AXP22x address 0x%02x on bus 0x%02x\n", Axp22xAddress, Axp22xBus));
   DEBUG ((DEBUG_INFO, "Axp22xSupported: Looking for I2C device with GUID %g and index %d\n", &I2cGuid, I2C_DEVICE_INDEX(Axp22xBus, Axp22xAddress)));
+
+  Status = EFI_UNSUPPORTED;
 
   // Check I2C device index
   if (CompareGuid (TmpI2cIo->DeviceGuid, &I2cGuid) &&
@@ -304,7 +310,8 @@ EFI_STATUS EFIAPI Axp22xStart (
   Axp22xPowerProtocol->SetIntEnable = Axp22xSetIntEnable;
   Axp22xPowerProtocol->SetIntDisable = Axp22xSetIntDisable;
 
-  DEBUG ((DEBUG_INFO, "Installing Axp22xPowerProtocol handler...\n"));
+  DEBUG ((DEBUG_INFO, "Axp22xStart: Installing Axp22xPowerProtocol handler...\n"));
+
   Status = gBS->InstallMultipleProtocolInterfaces(
     &ControllerHandle,
     &gAxpPowerProtocolGuid,

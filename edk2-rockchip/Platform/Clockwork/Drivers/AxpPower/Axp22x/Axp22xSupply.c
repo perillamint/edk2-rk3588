@@ -47,22 +47,7 @@ STATIC EFI_STATUS axp22_set_dc1sw(IN CONST AXP_POWER_PROTOCOL *This, int onoff)
 
   return EFI_SUCCESS;
 }
-/*
-************************************************************************************************************
-*
-*                                             function
-*
-*    �������ƣ�
-*
-*    �����б���
-*
-*    ����ֵ  ��
-*
-*    ˵��    ��
-*
-*
-************************************************************************************************************
-*/
+
 STATIC EFI_STATUS axp22_set_dc5ldo(IN CONST AXP_POWER_PROTOCOL *This, int onoff)
 {
   UINT8   reg_value;
@@ -88,22 +73,6 @@ STATIC EFI_STATUS axp22_set_dc5ldo(IN CONST AXP_POWER_PROTOCOL *This, int onoff)
   return EFI_SUCCESS;
 }
 
-/*
-************************************************************************************************************
-*
-*                                             function
-*
-*    �������ƣ�
-*
-*    �����б���
-*
-*    ����ֵ  ��
-*
-*    ˵��    ��
-*
-*
-************************************************************************************************************
-*/
 STATIC EFI_STATUS axp22_set_dcdc1(IN CONST AXP_POWER_PROTOCOL *This, int set_vol, int onoff)
 {
   UINT8   reg_value;
@@ -154,22 +123,7 @@ STATIC EFI_STATUS axp22_set_dcdc1(IN CONST AXP_POWER_PROTOCOL *This, int set_vol
 
   return EFI_SUCCESS;
 }
-/*
-************************************************************************************************************
-*
-*                                             function
-*
-*    �������ƣ�
-*
-*    �����б���
-*
-*    ����ֵ  ��
-*
-*    ˵��    ��
-*
-*
-************************************************************************************************************
-*/
+
 STATIC EFI_STATUS axp22_set_dcdc2(IN CONST AXP_POWER_PROTOCOL *This, int set_vol, int onoff)
 {
   UINT8   reg_value;
@@ -221,22 +175,7 @@ STATIC EFI_STATUS axp22_set_dcdc2(IN CONST AXP_POWER_PROTOCOL *This, int set_vol
 
   return EFI_SUCCESS;
 }
-/*
-************************************************************************************************************
-*
-*                                             function
-*
-*    �������ƣ�
-*
-*    �����б���
-*
-*    ����ֵ  ��
-*
-*    ˵��    ��
-*
-*
-************************************************************************************************************
-*/
+
 STATIC EFI_STATUS axp22_set_dcdc3(IN CONST AXP_POWER_PROTOCOL *This, int set_vol, int onoff)
 {
   UINT8   reg_value;
@@ -287,22 +226,7 @@ STATIC EFI_STATUS axp22_set_dcdc3(IN CONST AXP_POWER_PROTOCOL *This, int set_vol
 
   return EFI_SUCCESS;
 }
-/*
-************************************************************************************************************
-*
-*                                             function
-*
-*    �������ƣ�
-*
-*    �����б���
-*
-*    ����ֵ  ��
-*
-*    ˵��    ��
-*
-*
-************************************************************************************************************
-*/
+
 STATIC EFI_STATUS axp22_set_dcdc4(IN CONST AXP_POWER_PROTOCOL *This, int set_vol, int onoff)
 {
   UINT8   reg_value;
@@ -353,22 +277,7 @@ STATIC EFI_STATUS axp22_set_dcdc4(IN CONST AXP_POWER_PROTOCOL *This, int set_vol
 
   return EFI_SUCCESS;
 }
-/*
-************************************************************************************************************
-*
-*                                             function
-*
-*    �������ƣ�
-*
-*    �����б���
-*
-*    ����ֵ  ��
-*
-*    ˵��    ��
-*
-*
-************************************************************************************************************
-*/
+
 STATIC EFI_STATUS axp22_set_dcdc5(IN CONST AXP_POWER_PROTOCOL *This, int set_vol, int onoff)
 {
   UINT8   reg_value;
@@ -420,22 +329,6 @@ STATIC EFI_STATUS axp22_set_dcdc5(IN CONST AXP_POWER_PROTOCOL *This, int set_vol
   return EFI_SUCCESS;
 }
 
-/*
-************************************************************************************************************
-*
-*                                             function
-*
-*    �������ƣ�
-*
-*    �����б���
-*
-*    ����ֵ  ��
-*
-*    ˵��    ��
-*
-*
-************************************************************************************************************
-*/
 STATIC EFI_STATUS axp22_set_aldo1(IN CONST AXP_POWER_PROTOCOL *This, int set_vol, int onoff)
 {
   UINT8 reg_value;
@@ -487,22 +380,7 @@ STATIC EFI_STATUS axp22_set_aldo1(IN CONST AXP_POWER_PROTOCOL *This, int set_vol
 
   return EFI_SUCCESS;
 }
-/*
-************************************************************************************************************
-*
-*                                             function
-*
-*    �������ƣ�
-*
-*    �����б���
-*
-*    ����ֵ  ��
-*
-*    ˵��    ��
-*
-*
-************************************************************************************************************
-*/
+
 STATIC EFI_STATUS axp22_set_aldo2(IN CONST AXP_POWER_PROTOCOL *This, int set_vol, int onoff)
 {
   UINT8 reg_value;
@@ -554,22 +432,7 @@ STATIC EFI_STATUS axp22_set_aldo2(IN CONST AXP_POWER_PROTOCOL *This, int set_vol
 
   return EFI_SUCCESS;
 }
-/*
-************************************************************************************************************
-*
-*                                             function
-*
-*    �������ƣ�
-*
-*    �����б���
-*
-*    ����ֵ  ��
-*
-*    ˵��    ��
-*
-*
-************************************************************************************************************
-*/
+
 STATIC EFI_STATUS axp22_set_aldo3(IN CONST AXP_POWER_PROTOCOL *This, int set_vol, int onoff)
 {
   UINT8 reg_value;
@@ -621,22 +484,7 @@ STATIC EFI_STATUS axp22_set_aldo3(IN CONST AXP_POWER_PROTOCOL *This, int set_vol
 
   return EFI_SUCCESS;
 }
-/*
-************************************************************************************************************
-*
-*                                             function
-*
-*    �������ƣ�
-*
-*    �����б���
-*
-*    ����ֵ  ��
-*
-*    ˵��    ��
-*
-*
-************************************************************************************************************
-*/
+
 STATIC EFI_STATUS axp22_set_dldo1(IN CONST AXP_POWER_PROTOCOL *This, int set_vol, int onoff)
 {
   UINT8 reg_value;
@@ -688,22 +536,7 @@ STATIC EFI_STATUS axp22_set_dldo1(IN CONST AXP_POWER_PROTOCOL *This, int set_vol
 
   return EFI_SUCCESS;
 }
-/*
-************************************************************************************************************
-*
-*                                             function
-*
-*    �������ƣ�
-*
-*    �����б���
-*
-*    ����ֵ  ��
-*
-*    ˵��    ��
-*
-*
-************************************************************************************************************
-*/
+
 STATIC EFI_STATUS axp22_set_dldo2(IN CONST AXP_POWER_PROTOCOL *This, int set_vol, int onoff)
 {
   UINT8 reg_value;
@@ -755,22 +588,7 @@ STATIC EFI_STATUS axp22_set_dldo2(IN CONST AXP_POWER_PROTOCOL *This, int set_vol
 
   return EFI_SUCCESS;
 }
-/*
-************************************************************************************************************
-*
-*                                             function
-*
-*    �������ƣ�
-*
-*    �����б���
-*
-*    ����ֵ  ��
-*
-*    ˵��    ��
-*
-*
-************************************************************************************************************
-*/
+
 STATIC EFI_STATUS axp22_set_dldo3(IN CONST AXP_POWER_PROTOCOL *This, int set_vol, int onoff)
 {
   UINT8 reg_value;
@@ -822,22 +640,7 @@ STATIC EFI_STATUS axp22_set_dldo3(IN CONST AXP_POWER_PROTOCOL *This, int set_vol
 
   return EFI_SUCCESS;
 }
-/*
-************************************************************************************************************
-*
-*                                             function
-*
-*    �������ƣ�
-*
-*    �����б���
-*
-*    ����ֵ  ��
-*
-*    ˵��    ��
-*
-*
-************************************************************************************************************
-*/
+
 STATIC EFI_STATUS axp22_set_dldo4(IN CONST AXP_POWER_PROTOCOL *This, int set_vol, int onoff)
 {
   UINT8 reg_value;
@@ -889,22 +692,7 @@ STATIC EFI_STATUS axp22_set_dldo4(IN CONST AXP_POWER_PROTOCOL *This, int set_vol
 
   return EFI_SUCCESS;
 }
-/*
-************************************************************************************************************
-*
-*                                             function
-*
-*    �������ƣ�
-*
-*    �����б���
-*
-*    ����ֵ  ��
-*
-*    ˵��    ��
-*
-*
-************************************************************************************************************
-*/
+
 STATIC EFI_STATUS axp22_set_eldo1(IN CONST AXP_POWER_PROTOCOL *This, int set_vol, int onoff)
 {
   UINT8 reg_value;
@@ -956,22 +744,7 @@ STATIC EFI_STATUS axp22_set_eldo1(IN CONST AXP_POWER_PROTOCOL *This, int set_vol
 
   return EFI_SUCCESS;
 }
-/*
-************************************************************************************************************
-*
-*                                             function
-*
-*    �������ƣ�
-*
-*    �����б���
-*
-*    ����ֵ  ��
-*
-*    ˵��    ��
-*
-*
-************************************************************************************************************
-*/
+
 STATIC EFI_STATUS axp22_set_eldo2(IN CONST AXP_POWER_PROTOCOL *This, int set_vol, int onoff)
 {
   UINT8 reg_value;
@@ -1023,22 +796,7 @@ STATIC EFI_STATUS axp22_set_eldo2(IN CONST AXP_POWER_PROTOCOL *This, int set_vol
 
   return EFI_SUCCESS;
 }
-/*
-************************************************************************************************************
-*
-*                                             function
-*
-*    �������ƣ�
-*
-*    �����б���
-*
-*    ����ֵ  ��
-*
-*    ˵��    ��
-*
-*
-************************************************************************************************************
-*/
+
 STATIC EFI_STATUS axp22_set_eldo3(IN CONST AXP_POWER_PROTOCOL *This, int set_vol, int onoff)
 {
   UINT8 reg_value;
@@ -1090,22 +848,7 @@ STATIC EFI_STATUS axp22_set_eldo3(IN CONST AXP_POWER_PROTOCOL *This, int set_vol
 
   return EFI_SUCCESS;
 }
-/*
-************************************************************************************************************
-*
-*                                             function
-*
-*    �������ƣ�
-*
-*    �����б���
-*
-*    ����ֵ  ��
-*
-*    ˵��    ��
-*
-*
-************************************************************************************************************
-*/
+
 STATIC EFI_STATUS axp22_set_gpio0ldo(IN CONST AXP_POWER_PROTOCOL *This, int set_vol, int onoff)
 {
   UINT8 reg_value;
@@ -1159,22 +902,7 @@ STATIC EFI_STATUS axp22_set_gpio0ldo(IN CONST AXP_POWER_PROTOCOL *This, int set_
 
   return EFI_SUCCESS;
 }
-/*
-************************************************************************************************************
-*
-*                                             function
-*
-*    �������ƣ�
-*
-*    �����б���
-*
-*    ����ֵ  ��
-*
-*    ˵��    ��
-*
-*
-************************************************************************************************************
-*/
+
 STATIC EFI_STATUS axp22_set_gpio1ldo(IN CONST AXP_POWER_PROTOCOL *This, int set_vol, int onoff)
 {
   UINT8 reg_value;
@@ -1228,22 +956,7 @@ STATIC EFI_STATUS axp22_set_gpio1ldo(IN CONST AXP_POWER_PROTOCOL *This, int set_
 
   return EFI_SUCCESS;
 }
-/*
-************************************************************************************************************
-*
-*                                             function
-*
-*    name          :
-*
-*    parmeters     :
-*
-*    return        :
-*
-*    note          :
-*
-*
-************************************************************************************************************
-*/
+
 STATIC EFI_STATUS axp22_set_dcdc_output(IN CONST AXP_POWER_PROTOCOL *This, int sppply_index, int vol_value, int onoff)
 {
   switch(sppply_index)
