@@ -24,7 +24,8 @@
   Platform/Clockwork/ClockworkPkg.dec
 
 [Protocols]
-  gAxpPowerProtocolGuid
+  gAxpPowerProtocolGuid         ## CONSUMES
+  gRockchipDsiPanelProtocolGuid ## PRODUCES
 
 [LibraryClasses]
   ArmLib
@@ -35,6 +36,9 @@
   CruLib
   GpioLib
   PWMLib
+  TimerLib
+  UefiBootServicesTableLib
 
 [Sources.common]
   RockchipPlatformLib.c
+  ChiponeDsiPanel.c

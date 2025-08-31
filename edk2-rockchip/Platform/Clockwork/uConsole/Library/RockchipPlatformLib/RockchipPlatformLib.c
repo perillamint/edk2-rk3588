@@ -379,6 +379,71 @@ PlatformGetDtbFileGuid (
   return NULL;
 }
 
+#include <Library/UefiLib.h>
+#include <Library/TimerLib.h>
+
+extern EFI_STATUS
+EFIAPI
+AttachChiponeDsiPanel (
+  VOID
+  );
+
+STATIC VOID *mAxpPowerEventRegistration;
+
+STATIC VOID AxpPowerRegistrationEventHandler (
+  IN EFI_EVENT  Event,
+  IN VOID       *Context
+) {
+  EFI_STATUS Status;
+  AXP_POWER_PROTOCOL      *AxpPower = NULL ;
+  Status = gBS->LocateProtocol(&gAxpPowerProtocolGuid, NULL, (VOID **)&AxpPower);
+
+  if (EFI_ERROR (Status)) {
+    DEBUG((DEBUG_ERROR, "AxpPowerRegistrationEventHandler: Failed to get AxpPowerProtocol.\n"));
+    return;
+  }
+
+  DEBUG ((DEBUG_INFO, "AxpPowerRegistrationEventHandler: AxpPowerProtocol found.\n"));
+
+  Status = AxpPower->Probe(AxpPower);
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "Axp22xStart: AxpPower->Probe() failed\n"));
+  }
+
+  Status = AxpPower->SetSupplyStatusByName(AxpPower, "dcdc1", 3300, TRUE);
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "Axp22xStart: Failed to turn on DCDC1 to 3.3V\n"));
+  }
+
+  Status = AxpPower->SetSupplyStatusByName(AxpPower, "dcdc3", 1800, TRUE);
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "Axp22xStart: Failed to turn on DCDC3 to 1.8V\n"));
+  }
+
+  Status = AxpPower->SetSupplyStatusByName(AxpPower, "dldo2", 3300, TRUE);
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "Axp22xStart: Failed to turn on DLDO2 to 3.3V\n"));
+  }
+
+  Status = AxpPower->SetSupplyStatusByName(AxpPower, "dldo3", 3300, TRUE);
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "Axp22xStart: Failed to turn on DLDO3 to 3.3V\n"));
+  }
+
+  Status = AxpPower->SetSupplyStatusByName(AxpPower, "dldo4", 3300, TRUE);
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "Axp22xStart: Failed to turn on DLDO4 to 3.3V\n"));
+  }
+
+  // Turn on the LCD
+  Status = AxpPower->SetSupplyStatusByName(AxpPower, "aldo2", 3300, TRUE);
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "Axp22xStart: Failed to turn on ALDO2 to 3.3V\n"));
+  }
+
+  //AttachChiponeDsiPanel();
+}
+
 VOID
 EFIAPI
 PlatformEarlyInit (
@@ -389,17 +454,25 @@ PlatformEarlyInit (
   GpioPinSetFunction (1, GPIO_PIN_PC4, 0); // jdet
 
   EFI_STATUS Status;
+  AXP_POWER_PROTOCOL      *AxpPower = NULL ;
 
-  // Initialize Axp22x PMIC
-  DEBUG ((DEBUG_INFO, "Finding Axp22x protocol...\n"));
-  // TODO: Should it be static or not.
-  static AXP_POWER_PROTOCOL      *AxpPower = NULL ;
+  // Attach the panel.
+  AttachChiponeDsiPanel();
+
   Status = gBS->LocateProtocol(&gAxpPowerProtocolGuid, NULL, (VOID **)&AxpPower);
   if (EFI_ERROR (Status)) 
   {   
-    DEBUG((DEBUG_WARN, "Failed to get AxpPowerProtocol.\n"));
+    DEBUG((DEBUG_ERROR, "AxpPowerRegistrationEventHandler: Failed to get AxpPowerProtocol.\n"));
+    EfiCreateProtocolNotifyEvent (
+      &gAxpPowerProtocolGuid,
+      TPL_CALLBACK,
+      AxpPowerRegistrationEventHandler,
+      NULL,
+      &mAxpPowerEventRegistration
+    );
     return;
-    //return Status;
+  } else {
+    AxpPowerRegistrationEventHandler(NULL, NULL);
   }
-  DEBUG ((DEBUG_WARN, "AxpPowerID = %d\n", AxpPower->AxpPowerId));
+
 }

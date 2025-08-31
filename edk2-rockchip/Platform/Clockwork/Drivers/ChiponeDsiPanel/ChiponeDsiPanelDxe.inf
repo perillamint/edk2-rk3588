@@ -1,0 +1,35 @@
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = ChiponeDsiPanelDxe
+  FILE_GUID                      = dd97fca9-25a5-4fa9-bc06-5a61e2e93611
+  MODULE_TYPE                    = DXE_DRIVER
+  VERSION_STRING                 = 1.0
+
+  ENTRY_POINT                    = AttachChiponeDsiPanel
+
+
+[Sources.common]
+  ChiponeDsiPanelDxe.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  Silicon/Rockchip/RockchipPkg.dec
+  Platform/Clockwork/ClockworkPkg.dec
+
+[LibraryClasses]
+  BaseMemoryLib
+  PcdLib
+  UefiLib
+  UefiDriverEntryPoint
+  BaseLib
+  IoLib
+  GpioLib
+  TimerLib
+
+[Guids]
+  
+[Protocols]
+  gRockchipDsiPanelProtocolGuid   ## PRODUCES
+
+[Depex]
+  gAxpPowerProtocolGuid

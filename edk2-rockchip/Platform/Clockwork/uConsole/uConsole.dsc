@@ -63,6 +63,9 @@
   gRockchipTokenSpaceGuid.PcdRk860xRegulatorAddresses|{ 0x42, 0x43 }
   gRockchipTokenSpaceGuid.PcdRk860xRegulatorBuses|{ 0x0, 0x0 }
   gRockchipTokenSpaceGuid.PcdRk860xRegulatorTags|{ $(SCMI_CLK_CPUB01), $(SCMI_CLK_CPUB23) }
+  gClockworkTokenSpaceGuid.PcdAxp22xAddress|0x34
+  gClockworkTokenSpaceGuid.PcdAxp22xBus|0x08
+
 
   #
   # PCIe/SATA/USB Combo PIPE PHY support flags and default values
@@ -99,12 +102,9 @@
   # Display support flags and default values
   #
   gRK3588TokenSpaceGuid.PcdDisplayConnectors|{CODE({
-    VOP_OUTPUT_IF_HDMI0,
-    VOP_OUTPUT_IF_DP0
+    VOP_OUTPUT_IF_MIPI1
   })}
-
-  gClockworkTokenSpaceGuid.PcdAxp22xAddress|0x34
-  gClockworkTokenSpaceGuid.PcdAxp22xBus|0x08
+  gRK3588TokenSpaceGuid.PcdDisplayRotationDefault|90
 
 ################################################################################
 #
@@ -112,6 +112,8 @@
 #
 ################################################################################
 [Components.common]
+  $(VENDOR_DIRECTORY)/Drivers/AxpPower/Axp22x/Axp22xDxe.inf
+
   # ACPI Support
   $(PLATFORM_DIRECTORY)/AcpiTables/AcpiTables.inf
 
@@ -121,5 +123,3 @@
 
   # Splash screen logo
   $(VENDOR_DIRECTORY)/Drivers/LogoDxe/LogoDxe.inf
-
-  $(VENDOR_DIRECTORY)/Drivers/AxpPower/Axp22x/Axp22xDxe.inf
