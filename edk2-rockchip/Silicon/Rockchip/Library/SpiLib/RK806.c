@@ -706,8 +706,12 @@ RK806RegulatorInit (
   reg_id       = init_data.reg_id;
 
   if ((reg_id & 0xf0) == BUCK) {
-    buck_set_voltage (reg_id, init_voltage);
-    buck_set_enable (reg_id, 1);
+    if (init_voltage != 0) {
+      buck_set_voltage (reg_id, init_voltage);
+      buck_set_enable (reg_id, 1);
+    } else {
+      buck_set_enable (reg_id, 0);
+    }
   } else if ((reg_id & 0xf0) == NLDO) {
     nldo_set_voltage (reg_id, init_voltage);
     nldo_set_enable (reg_id, 1);
